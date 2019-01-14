@@ -1,0 +1,43 @@
+{
+  "name": "base-crud-service",
+  "version": "0.0.1",
+  "description": "CRUD base service",
+  "keywords": [
+    "auth"
+  ],
+  "author": {
+    "name": "Felipe Machado Guimaraes",
+    "email": "machado.guimaraes@gmail.com",
+    "url": "http://www.felipeguimaraes.io/"
+  },
+  "homepage": "http://www.felipeguimaraes.io/",
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.com:fmguimaraes/mach-two/authentication-service.git"
+  },
+  "engines": {
+    "node": ">= 6.0.0",
+    "npm": ">= 1.0.0"
+  },
+  "license":"ISC",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.15",
+    "browserify": "^16.2.2",
+    "isomorphic-fetch": "^2.2.1",
+    "express": "~4.15.4",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.2.17",
+    "request": "2.88.0",
+    "socket.io": "^2.0.3"
+  },
+  "devDependencies": {
+  },
+  "bundleDependencies": [],
+  "private": true,
+  "main": "server.js"
+}

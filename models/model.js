@@ -1,0 +1,201 @@
+"use strict"
+var MongoDBInterface = require("../db/MongoDBInterface");
+
+class BaseModel {
+    constructor() {
+        this.collection  = '';
+        this.initialized = false;
+        this.db =  new MongoDBInterface();
+    }
+    
+    init() {
+		if(!this.initialized) {
+		    this.db.init(this.collection, this.schema);
+		    this.DBModel = this.db.getModel();
+		}
+
+		this.initialized = true;
+    }
+
+
+    updateDBModel(db, data) {
+    	for(var name in data) {
+    		db[name] = data[name];
+    	}
+
+      	db.timestamp = new Date();
+
+        return db;
+    }
+
+    sanitizeData(data) {
+        delete data._id;
+        delete data.timestamp
+                
+        return Object.assign({},data);
+    };
+
+    createQuery(data) {
+        var newObject = this.sanitizeData(data);
+    
+
+        if(!!data.id) {
+          newObject._id = data.id;
+          delete newObject.id;
+        }
+
+        delete newObject.id;
+        return newObject; 
+    };
+
+    applyOr(value) {
+
+    }
+
+    async create(data) {
+        data = this.sanitizeData(data);
+        var self = this;
+
+        return new Promise(function(resolve, reject) {
+            self.init();
+            var dbModel = new self.DBModel();
+            var response = {};
+            dbModel = self.updateDBModel(dbModel, data);
+            dbModel.save(function(err, data){
+                if(err) {
+                    reject({"error" : true,"message" : "Error saving data", "errorMsg:" : err});  
+                } else {
+                    data =  !!data ? data._doc : data;
+                    resolve(Object.assign({}, data));
+                }
+                self.closeConnection();
+            });
+        });
+    };
+
+    async aggregation(query) {
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            self.init();
+            self.DBModelDB.get().aggregate(query, function (err, data) {
+               if(err) {
+                    reject({"error" : true,"message" : "Error retrieving aggregated data", "errorMsg:" : err});  
+                } else {
+                    data =  !!data ? data._doc : data;
+                    resolve(Object.assign({}, data));
+                }
+                self.closeConnection();
+            });
+        });
+    };
+
+    async read(query) {
+        var self = this;
+        return new Promise(function(resolve, reject) {
+                var response = null;
+                self.init(); 
+                self.DBModel.find(query,function(err, data){
+                if(err) {
+                    reject({"error" : true,"message" : "Error fetching data", "errorMsg:" : err});  
+                } else {
+                    resolve(data);
+                }
+                self.closeConnection();
+            });
+        });
+    }
+
+    async readOne(query) {
+        this.init();
+        var self = this;
+        return new Promise(function(resolve, reject) { 
+                self.DBModel.findOne(query,function(err, data){
+                if(err) {
+                    reject({"error" : true,"message" : "Error fetching data", "errorMsg:" : err});  
+                } else {
+                    data = !!data && !!data._doc ? data._doc : data;
+                    resolve(data);
+                }
+                self.closeConnection();
+            });
+        });
+    }
+
+    async readById(id) {
+        this.init();
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            self.DBModel.findById(id, function (err, data) {
+                if(err) {
+                    reject({"error" : true,"message" : "Error updating data", "errorMsg:" : err});  
+                } else {
+                    resolve(Object.assign({}, data));
+                }
+                self.closeConnection();
+            });
+        });
+    }
+
+    async update(query, body) {
+        body = this.sanitizeData(body);
+        var self = this;
+        this.init();
+        return new Promise(function(resolve, reject) {
+            self.DBModel.updateOne(query, body, function(err, data) {
+            if(err) {
+                reject({"error" : true, "data": err});  
+            } else {
+                resolve(body);
+            }
+            self.closeConnection();
+            });
+        });
+
+    }
+
+    async updateById(id, body) {
+        body = this.sanitizeData(body);
+        var self = this;
+        this.init();
+        return new Promise(function(resolve, reject) {
+            self.DBModel.findOneAndUpdate(id, body, function(err, data) {
+                if(err) {
+                    reject({"error" : 1, "data": err});  
+                } else {
+                    resolve(Object.assign({}, body));
+                }
+                self.closeConnection();
+            });
+        });
+ 
+     }
+
+     async delete(query, callback) {
+        let self = this;
+        let response;
+        return new Promise(function(resolve, reject) {
+            self.init();
+            self.DBModel.find(query,function(err, dbModel) {
+                if(err) {
+                    response = {"error" : true, "message" : "Error fetching data", "errMsg:" : err};
+                    self.closeConnection();
+                } else {
+                    self.DBModel.remove(query,function(err){
+                        if(err) {
+                            reject({"error" : true,"message" : "Error deleting data", "errorMsg:" : err});  
+                        } else {
+                            resolve(Object.assign(query,{"error" : false,"message" : "Delete success."}));
+                        }
+                        self.closeConnection();
+                    });
+                }
+            });
+        });
+    }
+
+    closeConnection() {
+        this.db.close();
+    }
+};
+
+module.exports = BaseModel;
