@@ -1,15 +1,16 @@
 "use strict"
 var os = require('os');
 var ifaces = os.networkInterfaces();
+var SETTINGS = require('../setting');
 
 class Config {
-  constructor(user, password, databaseHost, port) {
+  constructor() {
     this.host = this.getIP();
 
-    this.port = port | 8080;
-    this.mongoConnectionAddress = databaseHost |  this.host + ':27017/machtwo';
-    this.user =  user | "gateKeeper";
-    this.password  = password | "16c81a6c4ebcd09151720a4285dd74a5"
+    this.port =  SETTINGS.serverPort;
+    this.mongoConnectionAddress = SETTINGS.databaseHost;
+    this.user =  SETTINGS.user;
+    this.password  = SETTINGS.password;
   };
 
   getIP() {

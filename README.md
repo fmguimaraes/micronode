@@ -17,7 +17,7 @@ The Environment is a instance Ubuntu, configured with NodeJS and MongoDB; The AP
 * mkdir data
 * mkdir data/db
 * mongo
-  * use haliodx
+  * use machtwo
   * db.createUser( { user: "gateKeeper",
                  pwd: "16c81a6c4ebcd09151720a4285dd74a5",
                  roles: [ { role: "clusterAdmin", db: "admin" },

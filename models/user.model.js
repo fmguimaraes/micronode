@@ -8,7 +8,7 @@ class Users extends Model {
     this.collection = 'users';
 
     this.schema = {
-      email: String,
+      login: String,
       password: String,
       token: String,
       profile: Object,
