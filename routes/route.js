@@ -38,7 +38,7 @@ class Router extends M2Object {
 
     if (!!routerInfo[method]) {
       self.router.route('/' + routerInfo.path)[method]
-   
+
         (isTokenRequired, function (req, res) {
           routerInfo[method](req, res);
         });
@@ -86,19 +86,20 @@ class Router extends M2Object {
       });
   }
 
-  delete(req, res) {
-    req.params = this.model.createQuery(req.body);
-    this.model.delete(req.params)
-      .then(result => {
-        console.log("Router Delete Success", result);
-        res.send(result);
-        return new Promise(function (resolve, reject) {
-          resolve({ message: "ok" });
-        });
-      }, reason => {
-        console.log("Router Delete Error");
-        res.send(reason);
-      });
+  async delete(req, res) {
+    let user, reason, result, code;
+    let query = { _id: req.body._id }
+
+    try {
+        result = await this.model.delete(query);
+        code = !!result ? 200 : 404
+        result = !!result ? result : RESPONSES.UNKNOW_USER
+    } catch (err) {
+        reason = err
+        code = 500
+    }
+
+    res.status(code).send(result)
   }
 };
 
