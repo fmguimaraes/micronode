@@ -61,11 +61,8 @@ class Router extends M2Object {
   }
 
   read(req, res) {
-    console.log(req.params);
     let query = Object.keys(req.params).length != 0 ? req.params : req.query;
-    console.log(query);
     query = this.model.createQuery(query);
-
     this.model.read(query)
       .then(result => {
         console.log("Router GET Success", result.length);
@@ -78,6 +75,7 @@ class Router extends M2Object {
 
   update(req, res) {
     var query = this.model.createQuery(req.params);
+    console.log(query);
     this.model.update(query, req.body)
       .then(result => {
         console.log("Router Update Success", result);
@@ -89,7 +87,7 @@ class Router extends M2Object {
   }
 
   delete(req, res) {
-    req.params = this.model.createQuery(req.params);
+    req.params = this.model.createQuery(req.body);
     this.model.delete(req.params)
       .then(result => {
         console.log("Router Delete Success", result);

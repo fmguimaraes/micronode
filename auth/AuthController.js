@@ -11,11 +11,18 @@ function encrypt(text) {
     return hashPassword
 };
 
+
+function decrypt(token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace('-', '+').replace('_', '/');
+    return JSON.parse(window.atob(base64));
+};
+
 function create24hToken(id) {
     var returnValue = null;
 
     try {
-        returnValue = jwt.sign({ id: id }, config.secret, {
+        returnValue = jwt.sign({ _id: id }, config.secret, {
             expiresIn: 86400
         });
     } catch (e) {
@@ -50,45 +57,49 @@ function hasToken(req) {
     return !!req.headers['authorization'];;
 };
 
-async function validToken(req) {
-    var authenticated = false;
-    var token = hasToken(req) ? req.headers['authorization'] : null;
-
-    let result, reason;
+async function decryptToken(token) {
+    var reason, tokenData = null;
 
     try {
-        result = await verifyToken(token)
-        authenticated = result
+        tokenData = await verifyToken(token)
     }
     catch (err) {
         reason = err;
+        tokenData = null;
     }
 
-    return authenticated;
+    return tokenData;
 }
 
 
-async function validateStoredToken(req) {
-    let model = new UserModel();
-    var headerToken = hasToken(req) ? req.headers['authorization'] : null;
-    let response = await model.read({ _id: req.params.id });
-    let isStoredToken = !!response[0] && !!response[0].token &&
-        response[0].token === headerToken;
+async function validateStoredToken(token) {
+    let tokenData = await decryptToken(token);
+    let isStoredToken = null;
+    if(!!tokenData) {
+        let model = new UserModel();
+        let response = await model.read({ _id: tokenData._id });
+        isStoredToken = !!response[0] && !!response[0].token &&
+            response[0].token ===  token;
+    }
+
 
     return isStoredToken
 }
 
 async function tokenRequired(req, res, next) {
-    let isValidToken = await validToken(req);
-    let isStoredToken = await validateStoredToken(req);
+    let isStoredToken = false;
+
+    if(hasToken(req)) {
+        isStoredToken = await validateStoredToken(req.headers['authorization']);
+    }
 
     if (!hasToken(req)) {
         res.status(401).send(RESPONSES.TOKEN_NOT_PROVIDED)
-    } else if (!isValidToken || !isStoredToken) {
+    } else if (!isStoredToken) {
         res.status(401).send(RESPONSES.INVALID_TOKEN)
     } else {
         next()
     }
 };
 
-module.exports = { tokenRequired, comparePasswords, encrypt, create24hToken };
+module.exports = { tokenRequired, comparePasswords, encrypt, create24hToken, decryptToken };
