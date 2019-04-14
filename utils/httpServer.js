@@ -6,7 +6,8 @@ var http = require('http');
 var Config = require('../config.js');
 
 class HTTPServer {
-	constructor() {
+	constructor(node) {
+		this.node = node;
 		this.app = Express();
 		this.bodyParser = bodyParser;
 		this.http = http;
@@ -40,11 +41,11 @@ class HTTPServer {
 
 	start() {
 		var self = this;
-		this.server = http.createServer(this.app).listen(this.config.port, this.config.host, function () {
-			console.log('Auth service running with Express server listening on:' + self.config.host + ':' + self.config.port);
+		this.server = http.createServer(this.app).listen(this.config.port, '0.0.0.0', function () {
+			console.log('Log service running with Express server listening on:' + self.config.host + ':' + self.config.port);
 		});
 
-		http.createServer(this.app).listen(this.config.port, 'localhost');
+		this.node.socket.init();
 	}
 
 	getConfig() {

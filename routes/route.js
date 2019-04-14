@@ -1,8 +1,8 @@
 "use strict"
 var M2Object = require('../M2Object.js');
-
+var FileUploader = require('../utils/FileUploader');
 var Auth = require('../auth/AuthController')
-
+var SETTINGS = require('../../setting');
 class Router extends M2Object {
   constructor(app) {
     super(app);
@@ -47,9 +47,14 @@ class Router extends M2Object {
 
   createRouters() {
     return [];
-  }
+  } 
 
-  create(req, res) {
+  async create(req, res) {
+    if (SETTINGS.upload.formidable) {
+      let fileUploader =  new FileUploader();
+      req = await fileUploader.start(req, res);
+    }
+
     this.model.create(req.body)
       .then(result => {
         console.log("Router Create Success.", result);
@@ -63,6 +68,7 @@ class Router extends M2Object {
   read(req, res) {
     let query = Object.keys(req.params).length != 0 ? req.params : req.query;
     query = this.model.createQuery(query);
+
     this.model.read(query)
       .then(result => {
         console.log("Router GET Success", result.length);
@@ -91,12 +97,12 @@ class Router extends M2Object {
     let query = { _id: req.body._id }
 
     try {
-        result = await this.model.delete(query);
-        code = !!result ? 200 : 404
-        result = !!result ? result : RESPONSES.UNKNOW_USER
+      result = await this.model.delete(query);
+      code = !!result ? 200 : 404
+      result = !!result ? result : RESPONSES.UNKNOW_USER
     } catch (err) {
-        reason = err
-        code = 500
+      reason = err
+      code = 500
     }
 
     res.status(code).send(result)

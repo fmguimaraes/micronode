@@ -1,68 +1,53 @@
-var IO = require('socket.io');
-var path = require("path");
+var io = require('socket.io');
 
-var Socket = function() {
-	var self = {};
-	self.socketIO = null;
-	self.signature = '[Socket]';
-    self.clientMap = {};
-    self.clients = {};
 
- 	self.init =  function(node) { 
- 		var httpServer =  node.httpServer;
-		self.socketIO = IO(httpServer.http).listen(httpServer.server);
-		self.socketIO.on('connection', self.userConnected);
-        console.log('[SOCKET] initialized');
- 	} 
-
-    self.userConnected = function(socket) {
-        self.attachListeners(socket);
-        self.clients[socket.id] = socket;
-        console.log('[SOCKET] user connected', socket.id);
+class Socket {
+    constructor(node) {
+        this.socketIO = null;
+        this.node = node;
+        this.signature = '[Socket]';
     }
 
- 	self.attachListeners =  function(socket) {
-        socket.on('[SOCKET] register-user', self.registerUser);
- 	};
+    init() {
+        this.socketIO = io(this.node.httpServer.server);
+        console.log('[SOCKET] initialized');
+        this.socketIO.on('connection', this.onConnected.bind(this));
+        this.socketIO.on('event', this.onEvent.bind(this));
+        this.socketIO.on('disconnect', this.onDisconnect.bind(this));
+    }
 
-    self.registerUser = function(data) {
-        /*
-        console.log('registering user: ' + data.userId, ' session:', data.session);
-        self.clientMap[data.userId] = {};
-        self.clientMap[data.userId].session = data.session;
+    onConnected(socket) {
+        console.log('connected');
+        this.broadcast('log',{message:"welcome!"});
+    }
 
-        var socket = self.clients[data.session];
-        socket.emit('server message', 'welcome ' +  data.userId + '!');
-        */
-    };
+    onEvent(data) {
+        console.log('event', data);
+    }
 
-    self.send = function(message, userId, data){
-       if( self.clientMap.hasOwnProperty(userId)) {
+    onDisconnect() {
+        console.log('disconneted');
+    }
+
+    send(message, userId, data) {
+        if (self.clientMap.hasOwnProperty(userId)) {
             var sessionId = self.clientMap[userId].session;
-            if(self.clients.hasOwnProperty(sessionId)) {
+            if (self.clients.hasOwnProperty(sessionId)) {
                 var socket = self.clients[sessionId];
                 socket.emit(message, data);
             }
         }
 
-        if(message != "message") {
-         //    self.send("message", userId, data);
+        if (message != "message") {
+            //    self.send("message", userId, data);
         }
     };
 
-    self.broadcast = function(message, data){
+    broadcast(message, data) {
         console.log('[SOCKET]', message, data);
-        self.socketIO.emit(message, data);
+        this.socketIO.emit(message, data);
     };
-
- 	self.start =  function() { }
-
-  return {
-  	init : self.init,
-  	start : self.start,
-  	broadcast: self.broadcast,
-    send : self.send,
-  };
 };
 
 module.exports = Socket;
+
