@@ -52,7 +52,7 @@ class Router extends M2Object {
   async create(req, res) {
     if (SETTINGS.upload.formidable) {
       let fileUploader =  new FileUploader();
-      req = await fileUploader.start(req, res);
+      req.body = await fileUploader.start(req, res);
     }
 
     this.model.create(req.body)

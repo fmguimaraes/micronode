@@ -1,11 +1,12 @@
 
 
 var formidable = require('formidable');
+var SETTINGS = require('../../setting');
 
 class FileUploader {
     constructor() {
         let MB = 1024 * 1024;
- 
+
         this.form = new formidable.IncomingForm();
         this.form.encoding = SETTINGS.upload.encoding;
         this.form.maxFileSize = 1000 * MB;
@@ -37,24 +38,25 @@ class FileUploader {
         console.log('oError:', err);
     }
 
-    async uploadFile(req, res) {
-        this.form.parse(req);
+    async parseAndUpload(req, res) {
+        let self = this;
+        return new Promise(function (resolve, reject) {
+            self.form.parse(req, (err, fields, files) => {
+                resolve({ ...fields, ...files});
+            });
+        });
     }
 
     isUploadForm(req) {
-        return true;
-    }
-
-    appendUploadedFiles(body) {
-        return body;
+        return  Object.keys(req.body).length === 0;
     }
 
     async start(req, res) {
         let isUpload = this.isUploadForm(req);
 
         if (isUpload) {
-            let files = this.uploadFile(req, res);
-            req.body = this.appendUploadedFiles(req.body, files);
+            let body = await this.parseAndUpload(req, res);
+            req.body = body;
         }
 
         return req;
