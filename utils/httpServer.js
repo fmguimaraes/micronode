@@ -4,6 +4,8 @@ var Express = require('express');
 var bodyParser = require('body-parser');
 var http = require('http');
 var Config = require('../config.js');
+let UploadServer = require('./utils/uploadServer.js');
+
 
 class HTTPServer {
 	constructor(node) {
@@ -15,6 +17,10 @@ class HTTPServer {
 
 		this.configureHeaderAccess(this.app);
 		this.createHealthCheck(this.app);
+		this.configureUploadServer(this.app);
+	}
+	configureUploadServer(app) {
+		this.uploadServer = new UploadServer(app);
 	}
 
 	createHealthCheck(app) {
@@ -52,8 +58,12 @@ class HTTPServer {
 		return this.config;
 	}
 
-	use(router) {
-		this.app.use(router);
+	use(route) {
+		this.app.use(route);
+	}
+
+	useUpload(route) {
+		this.node.uploadServer.bind(this.app, route);
 	}
 
 	createRouter() {

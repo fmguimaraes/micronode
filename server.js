@@ -10,6 +10,7 @@ class ApplicationService {
   constructor() {
     this.httpServer = new HTTPServer(this);
     this.socket = new Socket(this);
+
     this.eventEmitter = new Events.EventEmitter();
 
     this.rest =  new RESTFacade(this);

@@ -6,10 +6,11 @@ var SETTINGS = require('../../setting');
 class Router extends M2Object {
   constructor(app) {
     super(app);
-    this.router = app.httpServer.createRouter();
+    this.route = app.httpServer.createRouter();
     this.model = null;
     this.result = null;
     this.response = null;
+    this.writeFile = null;
     this.auth = Auth;
 
     this.init();
@@ -21,37 +22,35 @@ class Router extends M2Object {
 
   configureRest() {
     let self = this;
-    this.routers.forEach(function (routerInfo, index, array) {
+    this.routers.forEach(function (routeInfo, index, array) {
 
-      console.log('[Router] configureRest /' + routerInfo.path);
+      console.log('[Router] configureRest /' + routeInfo.path);
 
-      self.processRouter(routerInfo, self, 'get');
-      self.processRouter(routerInfo, self, 'post');
-      self.processRouter(routerInfo, self, 'put');
-      self.processRouter(routerInfo, self, 'delete');
+      this.processRouter(routeInfo, 'get');
+      this.processRouter(routeInfo, 'post');
+      this.processRouter(routeInfo, 'put');
+      this.processRouter(routeInfo, 'delete');
     });
   }
 
 
-  processRouter(routerInfo, self, method) {
-    let isTokenRequired = !!routerInfo.tokenRequired ? self.auth.tokenRequired : (req, res, next) => { next() };
+  processRouter(routeInfo, method) {
+    let isTokenRequired = !!routeInfo.tokenRequired ? this.auth.tokenRequired : (req, res, next) => { next() };
 
-    if (!!routerInfo[method]) {
-      self.router.route('/' + routerInfo.path)[method]
-
-        (isTokenRequired, function (req, res) {
-          routerInfo[method](req, res);
-        });
+    if (!!routeInfo[method]) {
+      this.route.route('/' + routeInfo.path)[method](isTokenRequired, function (req, res) {
+        routeInfo[method](req, res);
+      });
     }
   }
 
   createRouters() {
     return [];
-  } 
+  }
 
   async create(req, res) {
     if (SETTINGS.upload.formidable) {
-      let fileUploader =  new FileUploader();
+      let fileUploader = new FileUploader();
       req.body = await fileUploader.start(req, res);
     }
 
