@@ -1,11 +1,11 @@
 "use strict"
 
-var Upload = require('./upload.js');
+var SomeModelRouter = require('./example_router.js');
 
 class Routes {
   constructor(node) {
     this.list = [];
-    this.list.push(new Upload(node));
+    this.list.push(new SomeModelRouter(node));
   }
 }
 

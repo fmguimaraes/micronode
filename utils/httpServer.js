@@ -6,9 +6,9 @@ var http = require('http');
 
 var Settings = require('../../setting');
 var serveIndex = require('serve-index')
-var serveStatic = require('serve-static')
 let UploadServer = require('./uploadServer');
-
+var path = require('path');
+const fs = require('fs');
 
 class HTTPServer {
 	constructor(node) {
@@ -23,14 +23,22 @@ class HTTPServer {
 		this.configureUploadServer(this.app);
 		this.configureStaticServer(this.app);
 	}
-	configureStaticServer(app){
-		let folder = (__dirname +  '/../..' + Settings.STATIC_FILES);
+	configureStaticServer(app) {
+		if (!!Settings.STATIC_FOLDERS) {
+			Settings.STATIC_FOLDERS.forEach((staticFolder) => {
+				console.log(staticFolder);
+				let folder = __dirname +  staticFolder.location;
 
-		var index = serveIndex(folder, {'icons': true})
-		var serve = serveStatic(folder);
-		app.use('/static', Express.static(folder), serveIndex(folder, {'icons': true}))
- 
-	console.log(folder)
+
+				// Serve URLs like /ftp/thing as public/ftp/thing
+// The express.static serves the file contents
+// The serveIndex is this module serving the directory
+//app.use('/ftp', express.static('public/ftp'), serveIndex('public/ftp', {'icons': true}))
+
+console.log(fs.lstatSync(folder).isDirectory() );
+				app.use(staticFolder.alias, Express.static(folder), serveIndex(folder, { 'icons': true }))
+			})
+		}
 	};
 
 	configureUploadServer(app) {
@@ -75,7 +83,7 @@ class HTTPServer {
 		if (!!routerInfo.onUploaded) {
 			this.uploadServer.use(router, routerInfo, this.app);
 		}
-		
+
 		this.app.use(router);
 	}
 
