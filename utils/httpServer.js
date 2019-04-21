@@ -30,7 +30,7 @@ class HTTPServer {
 		var serve = serveStatic(folder);
 		app.use('/static', Express.static(folder), serveIndex(folder, {'icons': true}))
  
-		console.log(folder);
+	console.log(folder)
 	};
 
 	configureUploadServer(app) {
