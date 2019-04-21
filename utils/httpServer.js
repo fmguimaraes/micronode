@@ -4,7 +4,9 @@ var Express = require('express');
 var bodyParser = require('body-parser');
 var http = require('http');
 var Config = require('../config.js');
-let UploadServer = require('./utils/uploadServer.js');
+var Settings = require('../../setting');
+const path = require('path');
+let UploadServer = require('./uploadServer');
 
 
 class HTTPServer {
@@ -13,12 +15,16 @@ class HTTPServer {
 		this.app = Express();
 		this.bodyParser = bodyParser;
 		this.http = http;
-		this.config = new Config();
+
 
 		this.configureHeaderAccess(this.app);
 		this.createHealthCheck(this.app);
 		this.configureUploadServer(this.app);
+		this.configureStaticServer(this.app);
 	}
+	configureStaticServer(app){
+		app.use('/files', Express.static(path.join(__dirname, 'files')))
+	};
 	configureUploadServer(app) {
 		this.uploadServer = new UploadServer(app);
 	}
@@ -31,24 +37,23 @@ class HTTPServer {
 	}
 
 	configureHeaderAccess(expressApp) {
-		expressApp.use(bodyParser.json({ extended: false, limit: 1024102420, type: 'application/json' }));
-		expressApp.use(bodyParser.urlencoded({ extended: true }))
-		expressApp.use(bodyParser.raw({ type: 'application/vnd.custom-type' }))
-		expressApp.use(bodyParser.text({ type: 'text/html' }))
+		expressApp.use(bodyParser.urlencoded({ extended: false }))
+		expressApp.use(bodyParser.json())
 
 		expressApp.use(function (req, response, next) {
-			response.setHeader('Access-Control-Allow-Origin', '*');
 			response.setHeader("Access-Control-Allow-Credentials", "true");
-			response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
-			response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization,Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, tus-resumable, upload-length, upload-metadata");
+			response.setHeader('Access-Control-Allow-Origin', '*');
+			response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE,PATCH");
+			response.setHeader("Access-Control-Expose-Headers", "Location, Upload-Offset, Upload-Checksum");
+			response.setHeader("Access-Control-Allow-Headers", "Authorization, Location, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, tus-resumable, upload-length, upload-metadata");
 			next();
 		});
 	}
 
 	start() {
 		var self = this;
-		this.server = http.createServer(this.app).listen(this.config.port, '0.0.0.0', function () {
-			console.log('Log service running with Express server listening on:' + self.config.host + ':' + self.config.port);
+		this.server = http.createServer(this.app).listen(Settings.PORT, Settings.HOST, function () {
+			console.log('Log service running with Express server listening on:' + Settings.HOST + ':' + Settings.PORT);
 		});
 
 		this.node.socket.init();
@@ -58,12 +63,12 @@ class HTTPServer {
 		return this.config;
 	}
 
-	use(route) {
-		this.app.use(route);
-	}
-
-	useUpload(route) {
-		this.node.uploadServer.bind(this.app, route);
+	use(router, routerInfo) {
+		if (!!routerInfo.onUploaded) {
+			this.uploadServer.use(router, routerInfo, this.app);
+		}
+		
+		this.app.use(router);
 	}
 
 	createRouter() {

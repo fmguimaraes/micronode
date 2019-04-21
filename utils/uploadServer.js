@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
 const express = require('express');
+var Settings = require('../../setting');
 
 const Server = require('../tus-node-server/index').Server;
 const FileStore = require('../tus-node-server/index').FileStore;
@@ -15,35 +16,26 @@ const EVENTS = require('../tus-node-server/index').EVENTS;
 const data_store = process.env.DATA_STORE || 'FileStore';
 const server = new Server();
 
+
 class UploadServer {
     constructor(httpServer) {
-        httpServer.all('*', server.handle.bind(server));
+        this.callbackMap = {};
+        this.initDataStore();
+
+        this.uploadApp = express();
+        this.uploadApp.all('*', server.handle.bind(server));
+
+    }
+    use(router, routerInfo, app) {
+        app.use(router, [this.uploadApp]);
+        server.on(EVENTS.EVENT_UPLOAD_COMPLETE, routerInfo.onUploaded);
     }
 
-    writeFile(req, res) {
-        filename = path.join(process.cwd(), '/node_modules/tus-js-client', filename);
-
-
-        return new Promise(function (resolve, reject) {
-            fs.readFile(filename, 'binary', (err, file) => {
-                if (err) {
-                    reject(reject);
-                }
-
-                file = file.replace('https://master.tus.io/files/', `http://${host}:${port}/files/`)
-                //  res.writeHead(200);
-                //  res.write(file);
-                //  res.end();
-
-                resolve({ filename: filename, file: file });
-            });
-        });
-    }
     initDataStore() {
         switch (data_store) {
             case 'GCSDataStore':
                 server.datastore = new GCSDataStore({
-                    path: '/files',
+                    path: Settings.STATIC_FILES,
                     projectId: 'vimeo-open-source',
                     keyFilename: path.resolve(__dirname, '../keyfile.json'),
                     bucket: 'tus-node-server',
@@ -57,7 +49,7 @@ class UploadServer {
                 assert.ok(process.env.AWS_REGION, 'environment variable `AWS_REGION` must be set');
 
                 server.datastore = new S3Store({
-                    path: '/files',
+                    path: Settings.STATIC_FILES,
                     bucket: process.env.AWS_BUCKET,
                     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -68,7 +60,7 @@ class UploadServer {
 
             default:
                 server.datastore = new FileStore({
-                    path: '/files',
+                    path: Settings.STATIC_FILES,
                 });
         }
     }
