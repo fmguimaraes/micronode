@@ -3,9 +3,10 @@
 var Express = require('express');
 var bodyParser = require('body-parser');
 var http = require('http');
-var Config = require('../config.js');
+
 var Settings = require('../../setting');
-const path = require('path');
+var serveIndex = require('serve-index')
+var serveStatic = require('serve-static')
 let UploadServer = require('./uploadServer');
 
 
@@ -23,8 +24,15 @@ class HTTPServer {
 		this.configureStaticServer(this.app);
 	}
 	configureStaticServer(app){
-		app.use('/files', Express.static(path.join(__dirname, 'files')))
+		let folder = (__dirname +  '/../..' + Settings.STATIC_FILES);
+
+		var index = serveIndex(folder, {'icons': true})
+		var serve = serveStatic(folder);
+		app.use('/static', Express.static(folder), serveIndex(folder, {'icons': true}))
+ 
+		console.log(folder);
 	};
+
 	configureUploadServer(app) {
 		this.uploadServer = new UploadServer(app);
 	}
