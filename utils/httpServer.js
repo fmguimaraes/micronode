@@ -26,23 +26,16 @@ class HTTPServer {
 	configureStaticServer(app) {
 		if (!!Settings.STATIC_FOLDERS) {
 			Settings.STATIC_FOLDERS.forEach((staticFolder) => {
-				console.log(staticFolder);
-				let folder = __dirname +  staticFolder.location;
-
-
-				// Serve URLs like /ftp/thing as public/ftp/thing
-// The express.static serves the file contents
-// The serveIndex is this module serving the directory
-//app.use('/ftp', express.static('public/ftp'), serveIndex('public/ftp', {'icons': true}))
-
-console.log(fs.lstatSync(folder).isDirectory() );
+				let folder = __dirname + staticFolder.location;
 				app.use(staticFolder.alias, Express.static(folder), serveIndex(folder, { 'icons': true }))
 			})
 		}
 	};
 
 	configureUploadServer(app) {
-		this.uploadServer = new UploadServer(app);
+		if (!!Settings.UPLOAD_FOLDER) {
+			this.uploadServer = new UploadServer(app);
+		}
 	}
 
 	createHealthCheck(app) {
@@ -80,7 +73,7 @@ console.log(fs.lstatSync(folder).isDirectory() );
 	}
 
 	use(router, routerInfo) {
-		if (!!routerInfo.onUploaded) {
+		if (!!routerInfo.onUploaded && !!Settings.UPLOAD_FOLDER) {
 			this.uploadServer.use(router, routerInfo, this.app);
 		}
 

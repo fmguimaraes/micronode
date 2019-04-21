@@ -1,6 +1,5 @@
 "use strict"
 var M2Object = require('../M2Object.js');
-var FileUploader = require('../utils/FileUploader');
 var Auth = require('../auth/AuthController')
 var SETTINGS = require('../../setting');
 class Router extends M2Object {
@@ -66,8 +65,6 @@ class Router extends M2Object {
   }
 
   async create(req, res) {
-    req = await this.uploadFiles(req, res);
-
     this.model.create(req.body)
       .then(result => {
         console.log("Router Create Success.", result);

@@ -3,18 +3,14 @@
 module.exports = {
     HOST:'0.0.0.0',
     PORT:'8081',
-    UPLOAD_FOLDER:'/mach-two/tmp',
+    UPLOAD_FOLDER: '/../files/tmp',
+    
     STATIC_FOLDERS: [
-        {alias:'public',location:'/mach-two/public'}
+        { alias: '/files', location: '/../../../files/public' }
     ],
-    upload : {
-        formidable: true,
-        encoding: 'utf-8',
-        path: "/m2/uploads/"
-    },
 
     user: "gateKeeper",
-    password: "Sw0rdf15h",
+    password: "16c81a6c4ebcd09151720a4285dd74a5",
     databaseHost: 'localhost:27017/',
-    serverPort: 3000
+    serverPort: 8081
 }
