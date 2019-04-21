@@ -7,12 +7,11 @@ class RestFacade {
     this.node = node;
     this.httpServer = node.httpServer;
     this.routes = new Routes(node);
-
-    for(let name in this.routes.list) {
-        this.httpServer.use(this.routes.list[name].router);
-    }
-
     console.log('RestFacade.constructor');
+
+    this.routes.list.forEach((router) => {
+      router.initialize(this.httpServer);
+    });
   }
 }
 

@@ -4,43 +4,60 @@ var FileUploader = require('../utils/FileUploader');
 var Auth = require('../auth/AuthController')
 var SETTINGS = require('../../setting');
 class Router extends M2Object {
-  constructor(app) {
-    super(app);
-    this.route = app.httpServer.createRouter();
+  constructor(node) {
+    super(node);
+    this.callbackMap = []
+    this.router = node.httpServer.createRouter();
     this.model = null;
     this.result = null;
     this.response = null;
-    this.writeFile = null;
+    this.upload = false;
     this.auth = Auth;
 
     this.init();
-    this.configureRest();
-  }
-  init() {
-    this.routers = [];
+    // this.configureRest();
   }
 
   configureRest() {
     let self = this;
-    this.routers.forEach(function (routeInfo, index, array) {
+    this.routes.forEach(function (routerInfo, index, array) {
+      let router = node.httpServer.createRouter();
+      console.log('[Router] configureRest /' + routerInfo.path);
 
-      console.log('[Router] configureRest /' + routeInfo.path);
+      self.processRouter(routerInfo, self, 'get');
+      self.processRouter(routerInfo, self, 'post');
+      self.processRouter(routerInfo, self, 'put');
+      self.processRouter(routerInfo, self, 'delete');
 
-      this.processRouter(routeInfo, 'get');
-      this.processRouter(routeInfo, 'post');
-      this.processRouter(routeInfo, 'put');
-      this.processRouter(routeInfo, 'delete');
+
     });
   }
 
+  initialize(httpServer) {
+    let self = this;
+    this.routes.forEach(function (routerInfo, index, array) {
+      let router = httpServer.createRouter();
+      console.log('[Router] configureRest /' + routerInfo.path);
 
-  processRouter(routeInfo, method) {
-    let isTokenRequired = !!routeInfo.tokenRequired ? this.auth.tokenRequired : (req, res, next) => { next() };
+      self.processRouter(routerInfo, self, 'get');
+      self.processRouter(routerInfo, self, 'post');
+      self.processRouter(routerInfo, self, 'put');
+      self.processRouter(routerInfo, self, 'delete');
 
-    if (!!routeInfo[method]) {
-      this.route.route('/' + routeInfo.path)[method](isTokenRequired, function (req, res) {
-        routeInfo[method](req, res);
-      });
+      httpServer.use(router, routerInfo);
+
+    });
+  }
+
+  processRouter(routerInfo, self, method) {
+    let isTokenRequired = !!routerInfo.tokenRequired ? self.auth.tokenRequired : (req, res, next) => { next() };
+
+    if (!!routerInfo[method]) {
+      self.router.route('/' + routerInfo.path)[method]
+
+        (isTokenRequired, function (req, res) {
+          routerInfo[method](req, res);
+        });
     }
   }
 
@@ -49,10 +66,7 @@ class Router extends M2Object {
   }
 
   async create(req, res) {
-    if (SETTINGS.upload.formidable) {
-      let fileUploader = new FileUploader();
-      req.body = await fileUploader.start(req, res);
-    }
+    req = await this.uploadFiles(req, res);
 
     this.model.create(req.body)
       .then(result => {
@@ -62,6 +76,16 @@ class Router extends M2Object {
         console.log("Router Create Error", reason);
         res.send(reason);
       });
+  }
+
+  async uploadFiles(req, res) {
+    let body = null;
+    if (SETTINGS.upload.formidable) {
+      let fileUploader = new FileUploader();
+      body = await fileUploader.start(req, res);
+    }
+
+    return body;
   }
 
   read(req, res) {
