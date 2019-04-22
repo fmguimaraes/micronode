@@ -8,10 +8,20 @@ class Users extends Model {
     this.collection = 'users';
 
     this.schema = {
+      timestamp: Date,
       login: String,
       password: String,
       token: String,
-      profile: Object,
+      fakeProfile: {
+        name: String,
+        firstName: String,
+        email:String,
+      },
+      profile: {
+        name: String,
+        firstName: String,
+        email:String,
+      },
     };
   }
 };

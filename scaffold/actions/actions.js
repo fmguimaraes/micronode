@@ -1,10 +1,10 @@
 "use strict"
 
-var UserAction = require('./user.action.js');
+var UsersAction = require('./users.js');
 
 class Actions {
   constructor(app) {
-    this.user = new UserAction(app);
+    this.user = new UsersAction(app);
   }
 };
 

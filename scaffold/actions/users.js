@@ -1,7 +1,7 @@
 "use strict"
-var UserModel = require('../models/user.model.js')
+var UserModel = require('../../models/user.model.js')
 const Action = require('./action')
-const RESPONSES = require('../consts/responses')
+const RESPONSES = require('../constants/responses')
 var Auth = require('../auth/AuthController')
 
 class UserActions extends Action {
@@ -50,10 +50,17 @@ class UserActions extends Action {
     }
 
     async read(req, res) {
-        let code, result, reason;
-        let query = this.model.createQuery( req.query);
+        let query, code, result, reason  = null;
+        if (Object.keys(req.query).length === 0) {
+            const tokenData = await Auth.decryptToken(req.headers['authorization']);
+            query = {_id : tokenData._id}
+        }
+
         try {
             result = await this.model.readOne(query);
+            result = { ...result};
+            delete result.password;
+            delete result.token;
             code = !!result ? 200 : 404
             result = !!result ? result : RESPONSES.UNKNOW_USER
         } catch (err) {
@@ -69,9 +76,10 @@ class UserActions extends Action {
 
     async  signout(req, res) {
         let code, result, reason;
+        let tokenData = await Auth.decryptToken(req.headers['authorization']);
         try {
             try {
-                result = await this.model.update({ _id: req.params.id }, { token: null });
+                result = await this.model.update({ _id: tokenData._id }, { token: null });
                 console.log(result);
             } catch (e) {
                 console.log(e);

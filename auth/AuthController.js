@@ -1,9 +1,9 @@
 "use strict"
-var UserModel = require('../models/user.model.js')
-var config = require('../consts/config');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
-const RESPONSES = require('../consts/responses')
+var UserModel = require('../models/user')
+var config = require('../constants/config');
+const RESPONSES = require('../constants/responses')
 
 function encrypt(text) {
     const hashPassword = bcrypt.hashSync(text);
