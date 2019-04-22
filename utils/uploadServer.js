@@ -4,7 +4,7 @@ const path = require('path');
 const assert = require('assert');
 const express = require('express');
 var Settings = require('../../setting');
-
+var atob = require('atob');
 const Server = require('../tus-node-server/index').Server;
 const FileStore = require('../tus-node-server/index').FileStore;
 const GCSDataStore = require('../tus-node-server/index').GCSDataStore;
@@ -25,6 +25,21 @@ class UploadServer {
         this.uploadApp.all('*', server.handle.bind(server));
 
     }
+
+    static parseUploadMetadata(event) {
+        let list = event.split(',');
+        let decodedObject = {};
+
+        list.forEach((token, index) => {
+            let list = token.split(' ');
+            let value = !!list[1] ?  atob(list[1]) : null;
+ 
+            decodedObject[list[0]] = value;
+        });
+
+        return  decodedObject;
+    };
+
     use(router, routerInfo, app) {
         app.use(router, [this.uploadApp]);
         server.on(EVENTS.EVENT_UPLOAD_COMPLETE, routerInfo.onUploaded);
@@ -34,7 +49,7 @@ class UploadServer {
         switch (data_store) {
             case 'GCSDataStore':
                 server.datastore = new GCSDataStore({
-                    path: Settings.UPLOAD_FOLDER,
+                    path: Settings.TMP_FOLDER,
                     projectId: 'vimeo-open-source',
                     keyFilename: path.resolve(__dirname, '../keyfile.json'),
                     bucket: 'tus-node-server',
@@ -48,7 +63,7 @@ class UploadServer {
                 assert.ok(process.env.AWS_REGION, 'environment variable `AWS_REGION` must be set');
 
                 server.datastore = new S3Store({
-                    path: Settings.UPLOAD_FOLDER,
+                    path: Settings.TMP_FOLDER,
                     bucket: process.env.AWS_BUCKET,
                     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -59,7 +74,7 @@ class UploadServer {
 
             default:
                 server.datastore = new FileStore({
-                    path: Settings.UPLOAD_FOLDER,
+                    path: Settings.TMP_FOLDER,
                 });
         }
     }
