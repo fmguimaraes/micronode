@@ -14,36 +14,18 @@ class Router extends M2Object {
     this.auth = Auth;
 
     this.init();
-    // this.configureRest();
-  }
-
-  configureRest() {
-    let self = this;
-    this.routes.forEach(function (routerInfo, index, array) {
-      let router = node.httpServer.createRouter();
-      console.log('[Router] configureRest /' + routerInfo.path);
-
-      self.processRouter(routerInfo, self, 'get');
-      self.processRouter(routerInfo, self, 'post');
-      self.processRouter(routerInfo, self, 'put');
-      self.processRouter(routerInfo, self, 'delete');
-
-
-    });
   }
 
   initialize(httpServer) {
     let self = this;
     this.routes.forEach(function (routerInfo, index, array) {
-      let router = httpServer.createRouter();
-      console.log('[Router] configureRest /' + routerInfo.path);
 
       self.processRouter(routerInfo, self, 'get');
       self.processRouter(routerInfo, self, 'post');
       self.processRouter(routerInfo, self, 'put');
       self.processRouter(routerInfo, self, 'delete');
 
-      httpServer.use(router, routerInfo);
+      httpServer.use(self.router, routerInfo);
 
     });
   }
@@ -52,11 +34,11 @@ class Router extends M2Object {
     let isTokenRequired = !!routerInfo.tokenRequired ? self.auth.tokenRequired : (req, res, next) => { next() };
 
     if (!!routerInfo[method]) {
-      self.router.route('/' + routerInfo.path)[method]
+      console.log('[Router]', method, routerInfo.path);
 
-        (isTokenRequired, function (req, res) {
-          routerInfo[method](req, res);
-        });
+      self.router.route(routerInfo.path)[method](isTokenRequired, function (req, res, next) {
+        routerInfo[method](req, res, next);
+      });
     }
   }
 
