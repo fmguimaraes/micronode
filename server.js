@@ -2,7 +2,7 @@
 let HTTPServer = require('./utils/httpServer.js');
 let RESTFacade = require('./routes/restFacade.js');
 let Socket = require('./utils/socket.js');
-let Actions = require('./actions/actions.js');
+let Actions = require('../actions/actions.js');
 let Events = require('events');
 
 
