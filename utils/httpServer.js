@@ -33,7 +33,7 @@ class HTTPServer {
 	};
 
 	configureUploadServer(app) {
-		if (!!Settings.Features.upload) {
+		if (!!Settings.Features && !!Settings.Features.upload) {
 			this.uploadServer = new UploadServer(app);
 		}
 	}
