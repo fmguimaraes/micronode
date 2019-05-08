@@ -14,7 +14,6 @@ class Router extends M2Object {
     this.auth = Auth;
 
     this.init();
-    // this.configureRest();
   }
 
   configureRest() {

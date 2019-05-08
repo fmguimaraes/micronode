@@ -8,7 +8,7 @@ class MongoDBInterface {
         this.model = null;
         this.options = { useNewUrlParser: true };
 
-        var db = mongoose.createConnection('mongodb://'+Settings.Database.USERDB + ':'+Settings.Database.PASSWORD_DB+'@'+ Settings.Database.MONGO_URL + Settings.Database.DATABASE,  this.options);
+        var db = mongoose.createConnection(`mongodb://${Settings.Database.user}:${Settings.Database.password}@${Settings.Database.host}${Settings.Database.name}`,  this.options);
         db.on('error', console.error.bind(console, 'connection error:'));
         db.once('open', function callback() {
         });

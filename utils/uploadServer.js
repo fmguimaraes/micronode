@@ -49,7 +49,7 @@ class UploadServer {
         switch (data_store) {
             case 'GCSDataStore':
                 server.datastore = new GCSDataStore({
-                    path: Settings.TMP_FOLDER,
+                    path: Settings.Folders.tmp,
                     projectId: 'vimeo-open-source',
                     keyFilename: path.resolve(__dirname, '../keyfile.json'),
                     bucket: 'tus-node-server',
@@ -63,7 +63,7 @@ class UploadServer {
                 assert.ok(process.env.AWS_REGION, 'environment variable `AWS_REGION` must be set');
 
                 server.datastore = new S3Store({
-                    path: Settings.TMP_FOLDER,
+                    path: Settings.Folders.tmp,
                     bucket: process.env.AWS_BUCKET,
                     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -74,7 +74,7 @@ class UploadServer {
 
             default:
                 server.datastore = new FileStore({
-                    path: Settings.TMP_FOLDER,
+                    path: Settings.Folders.tmp,
                 });
         }
     }

@@ -33,7 +33,7 @@ class HTTPServer {
 	};
 
 	configureUploadServer(app) {
-		if (!!Settings.UPLOAD_FOLDER) {
+		if (!!Settings.Features.upload) {
 			this.uploadServer = new UploadServer(app);
 		}
 	}
@@ -62,7 +62,7 @@ class HTTPServer {
 	start() {
 		var self = this;
 		this.server = http.createServer(this.app).listen(Settings.PORT, Settings.HOST, function () {
-			console.log('Log service running with Express server listening on:' + Settings.HOST + ':' + Settings.PORT);
+			console.log('Log service running with Express server listening on:' + Settings.Server.host + ':' + Settings.Server.port);
 		});
 
 		this.node.socket.init();
@@ -73,7 +73,7 @@ class HTTPServer {
 	}
 
 	use(router, routerInfo) {
-		if (!!routerInfo.onUploaded && !!Settings.UPLOAD_FOLDER) {
+		if (!!routerInfo.onUploaded && !!Settings.Folders.tmp) {
 			this.uploadServer.use(router, routerInfo, this.app);
 		}
 
