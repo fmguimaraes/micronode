@@ -61,8 +61,8 @@ class HTTPServer {
 
 	start() {
 		var self = this;
-		this.server = http.createServer(this.app).listen(Settings.PORT, Settings.HOST, function () {
-			console.log('Log service running with Express server listening on:' + Settings.Server.host + ':' + Settings.Server.port);
+		this.server = http.createServer(this.app).listen(Settings.Server.port, Settings.Server.host , function () {
+			console.log(Settings.Server.name  + 'service running with Express server listening on:' + Settings.Server.host + ':' + Settings.Server.port);
 		});
 
 		this.node.socket.init();
