@@ -1,6 +1,6 @@
 "use strict"
 var mongoose = require('mongoose');
-var SystemProperties = require('../utils/systemProperties.js');
+var Settings = require('../../settings');
 var Schema = mongoose.Schema;
 
 class MongoDBInterface {
@@ -8,7 +8,7 @@ class MongoDBInterface {
         this.model = null;
         this.options = { useNewUrlParser: true };
 
-        var db = mongoose.createConnection('mongodb://'+SystemProperties.USERDB + ':'+SystemProperties.PASSWORD_DB+'@'+ SystemProperties.MONGO_URL + SystemProperties.DATABASE,  this.options);
+        var db = mongoose.createConnection('mongodb://'+Settings.Database.USERDB + ':'+Settings.Database.PASSWORD_DB+'@'+ Settings.Database.MONGO_URL + Settings.Database.DATABASE,  this.options);
         db.on('error', console.error.bind(console, 'connection error:'));
         db.once('open', function callback() {
         });

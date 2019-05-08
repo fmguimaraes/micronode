@@ -4,7 +4,7 @@ var Express = require('express');
 var bodyParser = require('body-parser');
 var http = require('http');
 
-var Settings = require('../../setting');
+var Settings = require('../../settings');
 var serveIndex = require('serve-index')
 let UploadServer = require('./uploadServer');
 var path = require('path');

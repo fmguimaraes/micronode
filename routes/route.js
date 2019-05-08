@@ -1,7 +1,7 @@
 "use strict"
 var M2Object = require('../M2Object.js');
 var Auth = require('../auth/AuthController')
-var SETTINGS = require('../../setting');
+
 class Router extends M2Object {
   constructor(node) {
     super(node);
@@ -73,16 +73,6 @@ class Router extends M2Object {
         console.log("Router Create Error", reason);
         res.send(reason);
       });
-  }
-
-  async uploadFiles(req, res) {
-    let body = null;
-    if (SETTINGS.upload.formidable) {
-      let fileUploader = new FileUploader();
-      body = await fileUploader.start(req, res);
-    }
-
-    return body;
   }
 
   read(req, res) {
