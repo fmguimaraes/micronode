@@ -24,9 +24,10 @@ class HTTPServer {
 		this.configureStaticServer(this.app);
 	}
 	configureStaticServer(app) {
-		if (!!Settings.Folders && !!Settings.Folders.staticFolders) {
+		if (!!Settings.Folders && !!Settings.Folders.static) {
 			Settings.Folders.static.forEach((staticFolder) => {
-				let folder = __dirname + staticFolders.location;
+				let folder = __dirname + staticFolder.location;
+				console.log(folder);
 				app.use(staticFolder.alias, Express.static(folder), serveIndex(folder, { 'icons': true }))
 			})
 		}
