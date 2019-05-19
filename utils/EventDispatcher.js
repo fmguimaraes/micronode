@@ -9,7 +9,6 @@ class EventDispatcher {
     };
 
     emit(event, ...args) {
-        console.log(event, args);
         this.eventEmitter.emit(event, args);
     }
 
