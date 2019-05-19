@@ -1,5 +1,5 @@
 var io = require('socket.io');
-
+var path = require("path");
 
 class Socket {
     constructor(node) {
@@ -50,4 +50,3 @@ class Socket {
 };
 
 module.exports = Socket;
-

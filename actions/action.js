@@ -3,6 +3,7 @@
 class Action {
     constructor(app) {
         this.eventEmitter = app.eventEmitter;
+        this.socket = app.socket;
     }
 };
 

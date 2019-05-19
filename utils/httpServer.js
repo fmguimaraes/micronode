@@ -77,8 +77,6 @@ class HTTPServer {
 			this.uploadServer.use(router, routerInfo, this.app);
 		}
 
-
-	
 		this.app.use(router);
 	}
 

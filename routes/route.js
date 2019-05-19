@@ -1,7 +1,7 @@
 "use strict"
 var M2Object = require('../M2Object.js');
 var Auth = require('../auth/AuthController')
-
+var path = require('path');
 class Router extends M2Object {
   constructor(node) {
     super(node);
@@ -24,10 +24,22 @@ class Router extends M2Object {
       self.processRouter(routerInfo, self, 'post');
       self.processRouter(routerInfo, self, 'put');
       self.processRouter(routerInfo, self, 'delete');
+      self.processStatic(routerInfo, self);
 
       httpServer.use(self.router, routerInfo);
-
     });
+  }
+
+  processStatic(routerInfo, self) {
+    if (!!routerInfo.static) {
+      console.log('[Router]', 'static', routerInfo.path,routerInfo.static);
+      let isTokenRequired = !!routerInfo.tokenRequired ? self.auth.tokenRequired : (req, res, next) => { next() };
+
+      self.router.route(routerInfo.path)['get'](isTokenRequired, function (req, res, next) {
+        res.sendFile(path.resolve(__dirname + routerInfo.static));
+      });
+
+    }
   }
 
   processRouter(routerInfo, self, method) {
