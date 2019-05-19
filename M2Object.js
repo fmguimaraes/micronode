@@ -4,6 +4,7 @@ class M2Object {
   constructor (app) {
     this.app = app;
     if(!!app) {
+      this.log = app.log;
       this.socket = app.socket;
       this.eventEmitter = app.eventEmitter;
     }
