@@ -9,14 +9,14 @@ let Log = require('./utils/Log.js');
 class ApplicationService {
   constructor() {
     this.httpServer = new HTTPServer(this);
-    this.socket = new Socket(this);
     this.log = new Log(this);
-
     this.eventEmitter = new EventDispatcher(this);
+    this.socket = new Socket(this);
 
     this.rest =  new RESTFacade(this);
     this.actions =  new Actions(this);
-
+  
+    
     this.httpServer.start(); 
     this.socket.init(this);
   }

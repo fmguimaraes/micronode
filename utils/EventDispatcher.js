@@ -8,8 +8,8 @@ class EventDispatcher {
         this.eventEmitter = new Events.EventEmitter();
     };
 
-    emit(event, ...args) {
-        this.eventEmitter.emit(event, args);
+    emit(event, arg1, arg2, arg3) {
+        this.eventEmitter.emit(event, arg1, arg2, arg3);
     }
 
     on(event, listener) {
