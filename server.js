@@ -3,15 +3,16 @@ let HTTPServer = require('./utils/httpServer.js');
 let RESTFacade = require('./routes/restFacade.js');
 let Socket = require('./utils/socket.js');
 let Actions = require('../actions/actions.js');
-let Events = require('events');
-
+let EventDispatcher = require('./utils/EventDispatcher.js');
+let Log = require('./utils/Log.js');
 
 class ApplicationService {
   constructor() {
     this.httpServer = new HTTPServer(this);
     this.socket = new Socket(this);
+    this.log = new Log(this);
 
-    this.eventEmitter = new Events.EventEmitter();
+    this.eventEmitter = new EventDispatcher(this);
 
     this.rest =  new RESTFacade(this);
     this.actions =  new Actions(this);
