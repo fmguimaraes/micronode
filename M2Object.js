@@ -6,6 +6,7 @@ class M2Object {
     if(!!app) {
       this.log = app.log;
       this.socket = app.socket;
+      this.httpServer = app.httpServer;
       this.eventEmitter = app.eventEmitter;
     }
   }

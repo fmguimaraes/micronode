@@ -10,24 +10,24 @@ class Log {
     onSocketConnected() {
         this.debug('connected to log server')
     }
+
+    debug(message, data = {}) {
+        this.log('log', { level: 0, producer: Settings.Server.name, message: message, ...data });
+    }
+
     info(message, data = {}) {
-        this.log('log.info', { message: message, ...data });
+        this.log('log', { level: 1, message: message, ...data });
     }
 
     warn(message, data = {}) {
-        this.log('log.warn', { message: message, ...data });
+        this.log('log', { level: 2, message: message, ...data });
     }
 
     error(message, data = {}) {
-        this.log('log.error', { message: message, ...data });
-    }
-
-    debug(message, data = {}) {
-        this.log('log.debug', { producer: Settings.Server.name, message: message, ...data });
+        this.log('log', { level: 3, message: message, ...data });
     }
 
     log(event, data) {
-        console.log(event, data);
         this.socket.emit(event, data);
     }
 

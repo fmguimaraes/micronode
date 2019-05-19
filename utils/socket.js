@@ -1,24 +1,34 @@
 var io = require('socket.io');
 var path = require("path");
-
-class Socket {
-    constructor(node) {
-        this.socketIO = null;
-        this.node = node;
+var M2Object = require('../M2Object.js');
+class Socket extends M2Object {
+    constructor(app) {
+        super(app)
+        this.socket = null;
         this.signature = '[Socket]';
+        this.socketMap = {};
     }
 
     init() {
-        this.socketIO = io(this.node.httpServer.server);
+        let self = this;
+        this.socket = io(this.httpServer.server);
         console.log('[SOCKET] initialized');
-        this.socketIO.on('connection', this.onConnected.bind(this));
-        this.socketIO.on('event', this.onEvent.bind(this));
-        this.socketIO.on('disconnect', this.onDisconnect.bind(this));
+        this.socket.on('connection', this.onConnected.bind(self));
+        this.socket.on('disconnect', this.onDisconnect.bind(this));
+    }
+    setupBasicListeners(socket) {
+
+        socket.on("log.debug",function(event,data) {
+            console.log(event);
+            console.log(data);
+        });
+
     }
 
     onConnected(socket) {
-        console.log('connected');
-        this.broadcast('log',{message:"welcome!"});
+        console.log(socket.id, 'connected');
+        this.socketMap[socket.id] = socket;
+        this.setupBasicListeners(socket);
     }
 
     onEvent(data) {
@@ -45,7 +55,7 @@ class Socket {
 
     broadcast(message, data) {
         console.log('[SOCKET]', message, data);
-        this.socketIO.emit(message, data);
+        this.socket.emit(message, data);
     };
 };
 

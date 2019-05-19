@@ -37,7 +37,8 @@
     "request": "2.88.0",
     "rimraf": "^2.6.3",
     "serve-index": "^1.9.1",
-    "socket.io": "^2.0.3"
+    "socket.io": "^2.0.3",
+    "socketio-wildcard": "^2.0.0"
   },
   "devDependencies": {},
   "bundleDependencies": [],
