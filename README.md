@@ -1,36 +1,54 @@
+This service is based on a base service made in NodeJS, Express, MongoDB, SocketIO, TusIO and is intended to be used inside a folder that respects the organization described in /scaffod folder.
+
+## Actions
+## Routes
+## Models
+## Upload
+## Database Access
+## Auth System
+
 # Environment
-## Ubuntu 
-The Environment is a instance Ubuntu, configured with NodeJS and MongoDB; The API is available as systemctl service in ``/etc/systemctl/system/mach-two.service`` and it is launched at startup in port 8080.
+```bash
+sudo apt-get install nodejs npm mongodb -y
 
-### Environment
-* vim ~/.bashrc
-  * alias python=/usr/local/bin/python3.6
-  * alias node=nodejs
-  * alias pip3=pip
-* source ~/.bashrc
+ vim ~/.bashrc
+ alias python=/usr/local/bin/python3.6
+ alias node=nodejs
+ alias pip3=pip
+```
+```bash
+source ~/.bashrc
 * ln -s /usr/bin/nodejs /usr/bin/node 
+``` 
 
-### Packages
-``sudo apt-get install nodejs npm mongodb -y`` 
+## database
+Local database configuration
+```bash
+mkdir data
+mkdir data/db
+mongo
 
-## Mongo
-* mkdir data
-* mkdir data/db
-* mongo
-  * use machtwo
-  * db.createUser( { user: "gateKeeper",
+use machtwo
+db.createUser( { user: "gateKeeper",
                  pwd: "16c81a6c4ebcd09151720a4285dd74a5",
                  roles: [ { role: "clusterAdmin", db: "admin" },
                           { role: "readAnyDatabase", db: "admin" },
                           "readWrite"] },
                { w: "majority" , wtimeout: 5000 } )
+```
+## Pre-flight
+```bash
+cd /home/ubuntu/dev/your application/base-service
+git submodule update --init --recursive 
+npm install
+cd tus-node-server
+npm install
+```
 
-## Code Deploy  
-* go to /home/ubuntu/dev/application-service/ 
-* npm install
-* npm install --global nodemon
-* npm install --global gulp-cli
+configure settings.js to specify correct database address, user and password.
 
 ## Run
-* open an bash cli and run mongod (to run mongo)
-* nodemon server.js
+```bash
+cd /home/ubuntu/dev/your application/base-service
+nodemon base-service/server.js
+```
