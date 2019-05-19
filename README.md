@@ -1,8 +1,6 @@
-git push origin HEAD:master --force
-
 # Environment
 ## Ubuntu 
-The Environment is a instance Ubuntu, configured with NodeJS and MongoDB; The API is available as systemctl service in ``/etc/systemctl/system/hdx-api.service`` and it is launched at startup in port 8080.
+The Environment is a instance Ubuntu, configured with NodeJS and MongoDB; The API is available as systemctl service in ``/etc/systemctl/system/mach-two.service`` and it is launched at startup in port 8080.
 
 ### Environment
 * vim ~/.bashrc
