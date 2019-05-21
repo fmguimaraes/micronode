@@ -10,7 +10,6 @@ class Socket extends M2Object {
     }
 
     init() {
-
         this.socket = io(this.httpServer.server);
 
         this.socket.use(middleware);
@@ -26,7 +25,7 @@ class Socket extends M2Object {
 
             self.eventEmitter.emit(event, data);
             if (Settings.Server.messageBroker) {
-                self.socket.broadcast(event, data);
+                self.broadcast(event, data);
             }
         });   
     }
