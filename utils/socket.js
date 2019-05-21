@@ -9,6 +9,7 @@ class Socket extends M2Object {
         this.signature = '[Socket]';
         this.socketMap = {};
         this.lazyInitializationCallbacks = [];
+        this.lazyBroadcast = [];
     }
 
     init() {
@@ -18,9 +19,10 @@ class Socket extends M2Object {
             this.startClient();
         }
 
-        for(var event in this.lazyInitializationCallbacks) {
-           this.socket.on(event, this.lazyInitializationCallbacks[event]);
+        for (var event in this.lazyInitializationCallbacks) {
+            this.socket.on(event, this.lazyInitializationCallbacks[event]);
         }
+
 
     }
 
@@ -38,6 +40,10 @@ class Socket extends M2Object {
         console.log(Settings.Server.name, 'start client');
         this.socket = io(Settings.Servers.messageBroker);
         this.socket.on('connect', this.onSocketConnected.bind(this));
+
+        for (var event in this.lazyBroadcast) {
+            this.socket.emit(event, this.lazyBroadcast[event]);
+        }
     }
 
     onSocketConnected() {
@@ -83,17 +89,22 @@ class Socket extends M2Object {
     };
 
     on(event, callback) {
-        if(!this.socket) {
+        if (!this.socket) {
             this.lazyInitializationCallbacks[event] = callback;
 
         } else {
-            this.socket.on(event,callback);
+            this.socket.on(event, callback);
         }
     }
 
     broadcast(message, data) {
-        console.log('[SOCKET][BROADCAST]', message, data);
-        this.socket.emit(message, data);
+        if (!this.socket) {
+            this.lazyBroadcast[message] = data;
+
+        } else {
+            console.log('[SOCKET][BROADCAST]', message, data);
+            this.socket.emit(message, data);
+        }
     };
 };
 
