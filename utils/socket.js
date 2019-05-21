@@ -94,6 +94,11 @@ class Socket extends M2Object {
 
     emit(message, data) {
         console.log('[SOCKET][EMIT]', message, data);
+
+        if (!data.producer) {
+            data.producer = Settings.Server.name;
+        }
+        
         this.socket.emit(message, data);
     };
 };
