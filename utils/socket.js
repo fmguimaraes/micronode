@@ -6,7 +6,6 @@ var io = require('socket.io-client');
 class Socket extends M2Object {
     constructor(app) {
         super(app)
-        this.signature = '[Socket]';
         this.socketMap = {};
         this.lazyInitializationCallbacks = [];
     }
@@ -18,8 +17,8 @@ class Socket extends M2Object {
             this.startClient();
         }
 
-        for(var event in this.lazyInitializationCallbacks) {
-           this.socket.on(event, this.lazyInitializationCallbacks[event]);
+        for (var event in this.lazyInitializationCallbacks) {
+            this.socket.on(event, this.lazyInitializationCallbacks[event]);
         }
 
     }
@@ -45,25 +44,19 @@ class Socket extends M2Object {
     }
 
 
-
-    setupBasicListeners(socket, self) {
-        socket.on('*', function (packet) {
-            let event = packet.data[0];
-            let data = packet.data[1];
-
-            self.eventEmitter.emit(event, data);
-            if (Settings.Server.messageBroker) {
-                self.broadcast(event, data);
-            }
-        });
-    }
-
     onConnected(socket) {
         console.log(socket.id, 'connected');
         this.socketMap[socket.id] = socket;
-        socket.emit('log', { message: "welcome!" });
         let self = this;
-        this.setupBasicListeners(socket, self);
+
+        socket.on('*', function (packet) {
+            let event = packet.data[0];
+            let data = packet.data[1];
+            console.log(event, 'received from', data.producer);
+            self.emit(event, data);
+            self.eventEmitter.emit(event, data);
+        });
+
     }
 
     onDisconnect() {
@@ -85,16 +78,16 @@ class Socket extends M2Object {
     };
 
     on(event, callback) {
-        if(!this.socket) {
+        if (!this.socket) {
             this.lazyInitializationCallbacks[event] = callback;
 
         } else {
-            this.socket.on(event,callback);
+            this.socket.on(event, callback);
         }
     }
 
-    broadcast(message, data) {
-        console.log('[SOCKET][BROADCAST]', message, data);
+    emit(message, data) {
+        console.log('[SOCKET][EMIT]', message, data);
         this.socket.emit(message, data);
     };
 };
