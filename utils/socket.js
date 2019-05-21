@@ -2,6 +2,7 @@ var io = require('socket.io');
 var middleware = require('socketio-wildcard')();
 var M2Object = require('../M2Object.js');
 var Settings = require('../../settings');
+var io = require('socket.io-client');
 class Socket extends M2Object {
     constructor(app) {
         super(app)
@@ -10,6 +11,25 @@ class Socket extends M2Object {
     }
 
     init() {
+        if (Settings.Server.messageBroker) {
+            this.startServer();
+        } else {
+            this.startClient();
+        }
+
+    }
+
+    startClient() {
+        console.log(Settings.Server.name, 'start client');
+        this.socket = io(Settings.Servers.messageBroker);
+        this.socket.on('connect', this.onSocketConnected.bind(this));
+    }
+
+    onSocketConnected() {
+        console.debug('service connected to message broker server')
+    }
+
+    startServer() {
         this.socket = io(this.httpServer.server);
 
         this.socket.use(middleware);
@@ -18,6 +38,7 @@ class Socket extends M2Object {
 
         console.log('[SOCKET] initialized');
     }
+
     setupBasicListeners(socket, self) {
         socket.on('*', function (packet) {
             let event = packet.data[0];
@@ -27,13 +48,13 @@ class Socket extends M2Object {
             if (Settings.Server.messageBroker) {
                 self.broadcast(event, data);
             }
-        });   
+        });
     }
- 
+
     onConnected(socket) {
         console.log(socket.id, 'connected');
         this.socketMap[socket.id] = socket;
-        this.broadcast('log',{message:"welcome!"});
+        this.broadcast('log', { message: "welcome!" });
         let self = this;
         this.setupBasicListeners(socket, self);
     }

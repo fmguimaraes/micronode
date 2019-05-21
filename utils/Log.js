@@ -2,13 +2,6 @@
 var Settings = require('../../settings');
 var io = require('socket.io-client');
 class Log {
-    constructor(app) {
-        if (!Settings.Server.messageBroker) {
-            this.socket = io(Settings.Servers.messageBroker);
-            this.socket.on('connect', this.onSocketConnected.bind(this));
-        }
-    }
-
     onSocketConnected() {
         this.debug('connected to log server')
     }
@@ -30,13 +23,8 @@ class Log {
     }
 
     log(event, data) {
-        if (!Settings.Server.messageBroker) {
-            this.socket.emit(event, data);
-        } else {
-            this.eventEmmitter(event, data);
-        }
+        this.socket.broadcast(event, data);
     }
-
 }
 
 module.exports = Log;
