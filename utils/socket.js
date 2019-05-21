@@ -41,7 +41,7 @@ class Socket extends M2Object {
         this.socket.on('connect', this.onSocketConnected.bind(this));
 
         for (var event in this.lazyBroadcast) {
-            this.socket.emit(event, this.lazyBroadcast[event]);
+            this.emit(event, this.lazyBroadcast[event]);
         }
     }
 
@@ -93,13 +93,17 @@ class Socket extends M2Object {
     }
 
     emit(message, data) {
-        console.log('[SOCKET][EMIT]', message, data);
+        if(!!this.socket) {
+            console.log('[SOCKET][EMIT]', message, data);
 
-        if (!data.producer) {
-            data.producer = Settings.Server.name;
+            if (!data.producer) {
+                data.producer = Settings.Server.name;
+            }
+            
+            this.socket.emit(message, data);
+        } else {
+            this.lazyBroadcast[message] = data;
         }
-        
-        this.socket.emit(message, data);
     };
 };
 
