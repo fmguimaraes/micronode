@@ -36,6 +36,14 @@ db.createUser( { user: "gateKeeper",
                           "readWrite"] },
                { w: "majority" , wtimeout: 5000 } )
 ```
+
+## Using this base service
+
+```bash
+git clone YOUR-PROJECT
+cd YOUR-PROJECT
+git submodule add https://gitlab.com/fmguimaraes/mach-two/base-service
+```
 ## Pre-flight
 ```bash
 cd /home/ubuntu/dev/your application/base-service
