@@ -25,7 +25,7 @@ class Socket extends M2Object {
             let data = packet.data[1];
 
             self.eventEmitter.emit(event, data);
-            if (Settings.messageBroker) {
+            if (Settings.Server.messageBroker) {
                 self.socket.broadcast(event, data);
             }
         });   

@@ -3,7 +3,7 @@ var Settings = require('../../settings');
 var io = require('socket.io-client');
 class Log {
     constructor(app) {
-        this.socket = io(Settings.MessageBrokerServer);
+        this.socket = io(Settings.Servers.messageBroker);
         this.socket.on('connect', this.onSocketConnected.bind(this));
     }
 
