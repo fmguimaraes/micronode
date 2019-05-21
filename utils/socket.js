@@ -44,8 +44,6 @@ class Socket extends M2Object {
         console.debug('service connected to message broker server')
     }
 
-
-
     setupBasicListeners(socket, self) {
         socket.on('*', function (packet) {
             let event = packet.data[0];
