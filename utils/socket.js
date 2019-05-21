@@ -41,7 +41,7 @@ class Socket extends M2Object {
         this.socket.on('connect', this.onSocketConnected.bind(this));
 
         for (var event in this.lazyBroadcast) {
-            this.socket.emit(event, this.lazyBroadcast[event]);
+            this.emit(event, this.lazyBroadcast[event]);
         }
     }
 
