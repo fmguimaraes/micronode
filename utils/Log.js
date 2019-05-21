@@ -27,7 +27,7 @@ class Log {
 
     log(event, data) {
         if(!!this.app.socket) {
-            this.app.socket.broadcast(event, data);
+            this.app.socket.emit(event, data);
         }
 
     }
