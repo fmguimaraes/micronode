@@ -16,9 +16,7 @@ class ApplicationService {
     this.rest =  new RESTFacade(this);
     this.actions =  new Actions(this);
   
-    
     this.httpServer.start(); 
-    this.socket.init(this);
   }
 }
 

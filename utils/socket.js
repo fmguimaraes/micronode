@@ -1,4 +1,4 @@
-var io = require('socket.io');
+var ioserver = require('socket.io');
 var middleware = require('socketio-wildcard')();
 var M2Object = require('../M2Object.js');
 var Settings = require('../../settings');
@@ -8,6 +8,7 @@ class Socket extends M2Object {
         super(app)
         this.signature = '[Socket]';
         this.socketMap = {};
+        this.lazyInitializationCallbacks = [];
     }
 
     init() {
@@ -17,6 +18,20 @@ class Socket extends M2Object {
             this.startClient();
         }
 
+        for(var event in this.lazyInitializationCallbacks) {
+           this.socket.on(event, this.lazyInitializationCallbacks[event]);
+        }
+
+    }
+
+    startServer() {
+        this.socket = ioserver(this.httpServer.server);
+
+        this.socket.use(middleware);
+        this.socket.on('connection', this.onConnected.bind(this));
+        this.socket.on('disconnect', this.onDisconnect.bind(this));
+
+        console.log('socket server initialized');
     }
 
     startClient() {
@@ -29,15 +44,7 @@ class Socket extends M2Object {
         console.debug('service connected to message broker server')
     }
 
-    startServer() {
-        this.socket = io(this.httpServer.server);
 
-        this.socket.use(middleware);
-        this.socket.on('connection', this.onConnected.bind(this));
-        this.socket.on('disconnect', this.onDisconnect.bind(this));
-
-        console.log('[SOCKET] initialized');
-    }
 
     setupBasicListeners(socket, self) {
         socket.on('*', function (packet) {
@@ -54,13 +61,9 @@ class Socket extends M2Object {
     onConnected(socket) {
         console.log(socket.id, 'connected');
         this.socketMap[socket.id] = socket;
-        this.broadcast('log', { message: "welcome!" });
+        socket.emit('log', { message: "welcome!" });
         let self = this;
         this.setupBasicListeners(socket, self);
-    }
-
-    onEvent(data) {
-        console.log('event', data);
     }
 
     onDisconnect() {
@@ -81,8 +84,17 @@ class Socket extends M2Object {
         }
     };
 
+    on(event, callback) {
+        if(!this.socket) {
+            this.lazyInitializationCallbacks[event] = callback;
+
+        } else {
+            this.socket.on(event,callback);
+        }
+    }
+
     broadcast(message, data) {
-        console.log('[SOCKET]', message, data);
+        console.log('[SOCKET][BROADCAST]', message, data);
         this.socket.emit(message, data);
     };
 };

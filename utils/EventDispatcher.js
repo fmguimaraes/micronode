@@ -4,7 +4,7 @@ let Events = require('events');
 
 class EventDispatcher {
     constructor(app) {
-        this.socket = app.socket;
+        this.app = app;
         this.eventEmitter = new Events.EventEmitter();
     };
 
@@ -13,6 +13,7 @@ class EventDispatcher {
     }
 
     on(event, listener) {
+        this.app.socket.on(event, listener);
         this.eventEmitter.on(event, listener);
     }
 }
