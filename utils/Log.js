@@ -2,6 +2,9 @@
 var Settings = require('../../settings');
 var io = require('socket.io-client');
 class Log {
+    constructor(app) {
+        this.app = app;
+    }
     onSocketConnected() {
         this.debug('connected to log server')
     }
@@ -23,7 +26,10 @@ class Log {
     }
 
     log(event, data) {
-        this.socket.broadcast(event, data);
+        if(!!this.app.socket) {
+            this.app.socket.broadcast(event, data);
+        }
+
     }
 }
 

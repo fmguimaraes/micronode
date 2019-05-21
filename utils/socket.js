@@ -8,6 +8,7 @@ class Socket extends M2Object {
         super(app)
         this.socketMap = {};
         this.lazyInitializationCallbacks = [];
+        this.lazyBroadcast = [];
     }
 
     init() {
@@ -20,6 +21,7 @@ class Socket extends M2Object {
         for (var event in this.lazyInitializationCallbacks) {
             this.socket.on(event, this.lazyInitializationCallbacks[event]);
         }
+
 
     }
 
@@ -37,6 +39,10 @@ class Socket extends M2Object {
         console.log(Settings.Server.name, 'start client');
         this.socket = io(Settings.Servers.messageBroker);
         this.socket.on('connect', this.onSocketConnected.bind(this));
+
+        for (var event in this.lazyBroadcast) {
+            this.socket.emit(event, this.lazyBroadcast[event]);
+        }
     }
 
     onSocketConnected() {
