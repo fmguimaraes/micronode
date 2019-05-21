@@ -93,13 +93,17 @@ class Socket extends M2Object {
     }
 
     emit(message, data) {
-        console.log('[SOCKET][EMIT]', message, data);
+        if(!!this.socket) {
+            console.log('[SOCKET][EMIT]', message, data);
 
-        if (!data.producer) {
-            data.producer = Settings.Server.name;
+            if (!data.producer) {
+                data.producer = Settings.Server.name;
+            }
+            
+            this.socket.emit(message, data);
+        } else {
+            this.lazyBroadcast[message] = data;
         }
-        
-        this.socket.emit(message, data);
     };
 };
 
