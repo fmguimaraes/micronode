@@ -14,15 +14,13 @@ class Socket extends M2Object {
     init() {
         if (Settings.Server.messageBroker) {
             this.startServer();
-        } else {
-            this.startClient();
         }
 
-        for (var event in this.lazyInitializationCallbacks) {
-            this.socket.on(event, this.lazyInitializationCallbacks[event]);
+        this.startClient();
+
+        for (var event in this.lazyBroadcast) {
+            this.emit(event, this.lazyBroadcast[event]);
         }
-
-
     }
 
     startServer() {
@@ -37,11 +35,13 @@ class Socket extends M2Object {
 
     startClient() {
         console.log(Settings.Server.name, 'start client');
-        this.socket = io(Settings.Servers.messageBroker);
-        this.socket.on('connect', this.onSocketConnected.bind(this));
+        this.socketClient = io(Settings.Servers.messageBroker);
+        this.socketClient.on('connect', this.onSocketConnected.bind(this));
 
-        for (var event in this.lazyBroadcast) {
-            this.emit(event, this.lazyBroadcast[event]);
+
+
+        for (var event in this.lazyInitializationCallbacks) {
+            this.socketClient.on(event, this.lazyInitializationCallbacks[event]);
         }
     }
 
@@ -93,13 +93,13 @@ class Socket extends M2Object {
     }
 
     emit(message, data) {
-        if(!!this.socket) {
+        if (!!this.socket) {
             console.log('[SOCKET][EMIT]', message, data);
 
             if (!data.producer) {
                 data.producer = Settings.Server.name;
             }
-            
+
             this.socket.emit(message, data);
         } else {
             this.lazyBroadcast[message] = data;
