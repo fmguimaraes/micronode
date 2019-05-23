@@ -13,7 +13,7 @@
   "homepage": "http://www.felipeguimaraes.io/",
   "repository": {
     "type": "git",
-    "url": "git@gitlab.com:fmguimaraes/mach-two/authentication-service.git"
+    "url": "git@gitlab.com:fmguimaraes/mach-two/base-service.git"
   },
   "engines": {
     "node": ">= 6.0.0",
@@ -29,8 +29,8 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.15",
     "browserify": "^16.2.2",
+    "dockerode": "^2.5.8",
     "express": "~4.15.4",
-    "formidable": "^1.2.1",
     "isomorphic-fetch": "^2.2.1",
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.2.17",
