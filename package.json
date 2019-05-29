@@ -1,25 +1,29 @@
 {
-  "name": "base-crud-service",
+  "name": "@fmguimaraes/micronode",
   "version": "0.0.1",
-  "description": "CRUD base service",
+  "description": "Micro Service Framework",
   "keywords": [
-    "auth"
+    "microservices",
+    "npm",
+    "server",
+    "example",
+    "fmguimaraes"
   ],
   "author": {
-    "name": "Felipe Machado Guimaraes",
+    "name": "Felipe Machado Guimarães",
     "email": "machado.guimaraes@gmail.com",
     "url": "http://www.felipeguimaraes.io/"
   },
   "homepage": "http://www.felipeguimaraes.io/",
   "repository": {
     "type": "git",
-    "url": "git@gitlab.com:fmguimaraes/mach-two/base-service.git"
+    "url": "git@github.com:fmguimaraes/micronode.git"
   },
   "engines": {
     "node": ">= 6.0.0",
     "npm": ">= 1.0.0"
   },
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
     "start": "node server.js"
   },

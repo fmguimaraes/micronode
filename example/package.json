@@ -1,0 +1,36 @@
+{
+  "name": "@fmguimaraes/micronode-example",
+  "author": {
+    "name": "Felipe Machado Guimaraes",
+    "email": "machado.guimaraes@gmail.com",
+    "url": "http://www.felipeguimaraes.io/"
+  },
+  "version": "0.0.1",
+  "description": "Micronode implementation example",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fmguimaraes/micronode.git"
+  },
+  "keywords": [
+    "microservices",
+    "npm",
+    "server",
+    "example",
+    "fmguimaraes"
+  ],
+  "engines": {
+    "node": ">= 6.0.0",
+    "npm": ">= 1.0.0"
+  },
+  "dependencies": {
+    "@fmguimaraes/micronode": "file:///home/felipe/dev/opensource/micronode"
+  },
+  "devDependencies": {
+    "nodemon": "1.19.1"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  }
+}

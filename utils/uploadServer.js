@@ -3,7 +3,7 @@
 const path = require('path');
 const assert = require('assert');
 const express = require('express');
-var Settings = require('../../settings');
+
 var atob = require('atob');
 const Server = require('../tus-node-server/index').Server;
 const FileStore = require('../tus-node-server/index').FileStore;
@@ -17,7 +17,8 @@ const server = new Server();
 
 
 class UploadServer {
-    constructor(httpServer) {
+    constructor(httpServer, settings) {
+        this.settings = settings;
         this.callbackMap = {};
         this.initDataStore();
 
@@ -49,7 +50,7 @@ class UploadServer {
         switch (data_store) {
             case 'GCSDataStore':
                 server.datastore = new GCSDataStore({
-                    path: Settings.Folders.tmp,
+                    path: this.settings.Folders.tmp,
                     projectId: 'vimeo-open-source',
                     keyFilename: path.resolve(__dirname, '../keyfile.json'),
                     bucket: 'tus-node-server',
@@ -63,7 +64,7 @@ class UploadServer {
                 assert.ok(process.env.AWS_REGION, 'environment variable `AWS_REGION` must be set');
 
                 server.datastore = new S3Store({
-                    path: Settings.Folders.tmp,
+                    path: this.settings.Folders.tmp,
                     bucket: process.env.AWS_BUCKET,
                     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -74,7 +75,7 @@ class UploadServer {
 
             default:
                 server.datastore = new FileStore({
-                    path: Settings.Folders.tmp,
+                    path: this.settings.Folders.tmp,
                 });
         }
     }

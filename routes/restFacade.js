@@ -1,12 +1,9 @@
 "use strict"
-var Routes = require('../../routes/routes.js');
-
-
 class RestFacade {
   constructor(node) {
     this.node = node;
     this.httpServer = node.httpServer;
-    this.routes = new Routes(node);
+    this.routes = node.routes;
     console.log('RestFacade.constructor');
 
     this.routes.list.forEach((router) => {
