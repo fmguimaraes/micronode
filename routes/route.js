@@ -1,6 +1,6 @@
 "use strict"
 var M2Object = require('../M2Object.js');
-var Auth = require('../auth/AuthController')
+// var Auth = require('../auth/AuthController')
 var path = require('path');
 class Router extends M2Object {
   constructor(node) {
@@ -11,7 +11,7 @@ class Router extends M2Object {
     this.result = null;
     this.response = null;
     this.upload = false;
-    this.auth = Auth;
+    // this.auth = Auth;
 
     this.init();
   }

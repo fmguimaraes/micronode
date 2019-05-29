@@ -1,11 +1,11 @@
 "use strict"
 
-//var Users = require('./users.js');
+let Dummy = require('./dummy');
 
 class Routes {
   constructor(node) {
     this.list = [];
-  //  this.list.push(new Users(node));
+    this.list.push(new Dummy(node));
   }
 }
 

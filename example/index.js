@@ -5,7 +5,7 @@ const Actions = require('./actions/actions');
 const Routes = require('./routes/routes');
 
 class MicroServiceExample {
-  constructor() {
+  constructor() { 
     let routes = new Routes();
     let actions  = new Actions(); 
 

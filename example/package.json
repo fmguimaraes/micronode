@@ -24,9 +24,11 @@
     "npm": ">= 1.0.0"
   },
   "dependencies": {
+    "jsonwebtoken": "^8.3.0",
     "@fmguimaraes/micronode": "file:///home/felipe/dev/opensource/micronode"
   },
   "devDependencies": {
+    "jsonwebtoken": "^8.3.0",
     "nodemon": "1.19.1"
   },
   "main": "index.js",

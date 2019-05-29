@@ -1,5 +1,5 @@
 "use strict"
-let Route = require('../routes/route.js');
+let Route = require('../../routes/route.js');
 
 class Dummy extends Route {
     constructor(app) {
@@ -8,16 +8,21 @@ class Dummy extends Route {
 
     init() {
         this.routes = [
-            { path: "dummy/auth", post: this.authenticate.bind(this), tokenRequired: false },
-            { path: "dummy/", post: this.create.bind(this), tokenRequired: false },
-            { path: "dummy/", get: this.read.bind(this), tokenRequired: false },
-            { path: "dummy/", update: this.put.bind(this), tokenRequired: false },
-            { path: "dummy/", delete: this.delete.bind(this), tokenRequired: false },
+            { path: "dummy/hello", post: this.hello.bind(this) },
+            { path: "dummy/auth", post: this.authenticate.bind(this) },
+            { path: "dummy/", post: this.create.bind(this) },
+            { path: "dummy/", get: this.read.bind(this) },
+            { path: "dummy/", update: this.put.bind(this) },
+            { path: "dummy/", delete: this.delete.bind(this) },
         ];
     }
 
-    authenticate(req,res) {
+    authenticate(req, res) {
         this.eventEmitter.emit('users.authenticate', req, res);
+    }
+
+    hello(req, res) {
+        res.status(200).send('hi');
     }
 };
 
