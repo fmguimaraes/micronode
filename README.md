@@ -1,4 +1,4 @@
-This service is based on a base service made in NodeJS, Express, MongoDB, SocketIO, TusIO and is intended to be used inside a folder that respects the organization described in /scaffod folder.
+Micronode is a set of tools easily bootstrap a (micro)service architecture. is Is made with NodeJS, Express, MongoDB, SocketIO, TusIO and is intended to be used inside a folder that respects the organization described in /scaffod folder. Its current status is WIP. 
 
 ## Actions
 ## Routes
