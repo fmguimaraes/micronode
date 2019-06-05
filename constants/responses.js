@@ -9,7 +9,7 @@ const responses = {
 
     ANNOTATION_ALREADY_EXISTS: { message: "annotation already exists"},
     UNABLE_TO_CREATE_ANNOTATION: { message: "unable to create annotation"},
-    
+    UNKNOW_ANNOTATION: { message: "unknow annotation" },
 };
 
 module.exports = responses;
