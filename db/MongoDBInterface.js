@@ -23,7 +23,7 @@ class MongoDBInterface {
     }
 
     close() {
-        console.log('MongoDBInterface.close');
+        //console.log('MongoDBInterface.close');
         return mongoose.connection.close();
     }
 }
