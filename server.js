@@ -20,7 +20,12 @@ class ApplicationService {
 
     this.httpServer.start(); 
   }
+
+  getHttpServer() {
+    return this.httpServer;
+  }
 }
 
 let application = new ApplicationService();
 
+module.exports = application.getHttpServer();
