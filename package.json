@@ -21,7 +21,8 @@
   },
   "license": "ISC",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "mocha --exit"
   },
   "dependencies": {
     "atob": "^2.1.2",
