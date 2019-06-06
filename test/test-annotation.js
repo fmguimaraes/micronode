@@ -1,9 +1,11 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-var server = require('../server');
-server = server.app;
+var server = require('../server').app;
+
 let should = chai.should();
 let expect = chai.expect;
+
+let Annotation = require('../../models/annotation');
 
 chai.use(chaiHttp);
 
@@ -25,23 +27,28 @@ describe('Annotations', function() {
             done();
         });
     });
+
     it('should read a SINGLE annotation on /annotation/:id GET', function(done) {
-        var newAnnotation = new Annotation({
-            // TODO : add SUCESS depend on annotation structure.
-        });
-        // TODO : save Annonation in Database
-        newAnnotation.save(function(err, data) {
-          chai.request(server)
-            .get('/annotation/'+data.id)
-            .end(function(err, res){
-              res.should.have.status(200);
-              res.should.be.json;
-              res.body.should.be.a('object');
-              res.body.should.have.property('_id');
-              // TODO : add SUCESS depend on annotation structure.
-              res.body._id.should.equal(data.id);
-              done();
+        chai.request(server)
+            .post('/annotations')
+            //.type('annotations')
+            .send({ test: "dab2" }/* TODO : add JSON depend on annotation structure */)
+            .end(function(err, data) {
+                var newAnnotationId = data.body.SUCCESS._id;
+                chai.request(server)
+                    .get('/annotation/'+newAnnotationId)
+                    .end(function(err, res){
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        console.log(res.body);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('_id');
+                        res.body.should.have.property('test');
+                        res.body.test.should.equal('dab2');
+                        // TODO : add SUCESS depend on annotation structure.
+                        res.body._id.should.equal(newAnnotationId);
+                        done();
+                    });
             });
-        });
     });
 });
