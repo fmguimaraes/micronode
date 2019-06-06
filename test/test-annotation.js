@@ -49,7 +49,6 @@ describe('Annotations', function() {
                     });
             });
     });
-    
 
     it('should update a SINGLE annotation on /annotation/<id> PUT', function(done) {
         var annotationId = "TODO ADD AN ID WHO EXIST ON TEST DATABASE";
@@ -73,7 +72,7 @@ describe('Annotations', function() {
     it('should delete a SINGLE annotation on /annotation/<id> DELETE', function(done) {
         chai.request(server)
             .post('/annotations')
-            .send({ test: "dab2" }/* TODO : add JSON depend on annotation structure */)
+            .send({ test: "dab4" }/* TODO : add JSON depend on annotation structure */)
             .end(function(err, data) {
                 var newAnnotationId = data.body.SUCCESS._id;
                 chai.request(server)
