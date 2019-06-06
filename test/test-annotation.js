@@ -25,4 +25,23 @@ describe('Annotations', function() {
             done();
         });
     });
+    it('should read a SINGLE annotation on /annotation/:id GET', function(done) {
+        var newAnnotation = new Annotation({
+            // TODO : add SUCESS depend on annotation structure.
+        });
+        // TODO : save Annonation in Database
+        newAnnotation.save(function(err, data) {
+          chai.request(server)
+            .get('/annotation/'+data.id)
+            .end(function(err, res){
+              res.should.have.status(200);
+              res.should.be.json;
+              res.body.should.be.a('object');
+              res.body.should.have.property('_id');
+              // TODO : add SUCESS depend on annotation structure.
+              res.body._id.should.equal(data.id);
+              done();
+            });
+        });
+    });
 });
