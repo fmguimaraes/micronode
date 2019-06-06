@@ -131,15 +131,4 @@ describe('Annotations', function() {
             });
         });
     });
-
-    it('shouldn\'t delete a SINGLE annotation on /annotation/:id DELTE if annotation doesn\'t exist', function(done) {
-        var annotationId = new ObjectID("000000000001");
-        chai.request(server)
-            .delete('/annotation/'+annotationId)
-            .end(function(err, res){
-                res.should.have.status(404);
-                res.should.be.json;
-                done();
-            });
-    });
 });
