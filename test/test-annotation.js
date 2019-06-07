@@ -1,6 +1,6 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-var server = require('../server').app;
+var app = require('../server').httpServer.app;
 var ObjectID = require('mongodb').ObjectID;
 
 let should = chai.should();
@@ -12,7 +12,7 @@ chai.use(chaiHttp);
 
 describe('Annotations', function() {
     it('should add a SINGLE annotation on /annotations POST', function(done) {
-        chai.request(server)
+        chai.request(app)
             .post('/annotations')
             .send({ test: "dab" }/* TODO : add JSON depend on annotation structure */)
             .end(function(err, res) {
@@ -29,7 +29,7 @@ describe('Annotations', function() {
     });
 
     it('shouldn\'t add a SINGLE annotation on /annotations POST if duplicate', function(done) {
-        chai.request(server)
+        chai.request(app)
             .post('/annotations')
             .send({ test: "dab" }/* TODO : add JSON depend on annotation structure */)
             .end(function(err, res) {
@@ -42,13 +42,13 @@ describe('Annotations', function() {
     });
 
     it('should read a SINGLE annotation on /annotation/:id GET', function(done) {
-        chai.request(server)
+        chai.request(app)
             .post('/annotations')
             .send({ test: "dab2" }/* TODO : add JSON depend on annotation structure */)
             .end(function(err, data) {
                 var newAnnotationId = data.body.SUCCESS._id;
                 console.log(newAnnotationId);
-                chai.request(server)
+                chai.request(app)
                     .get('/annotation/'+newAnnotationId)
                     .end(function(err, res){
                         res.should.have.status(200);
@@ -66,7 +66,7 @@ describe('Annotations', function() {
 
     it('shouldn\'t read a SINGLE annotation on /annotation/:id GET if annotation doesn\'t exist', function(done) {
         var annotationId = new ObjectID("000000000001");
-        chai.request(server)
+        chai.request(app)
             .get('/annotation/'+annotationId)
             .end(function(err, res){
                 res.should.have.status(404);
@@ -77,12 +77,12 @@ describe('Annotations', function() {
 
     it('should update a SINGLE annotation on /annotation/<id> PUT', function(done) {
         var updatedField = "updated";
-        chai.request(server)
+        chai.request(app)
             .post('/annotations')
             .send({ test: "dab3" }/* TODO : add JSON depend on annotation structure */)
             .end(function(err, data) {
                 var newAnnotationId = data.body.SUCCESS._id;
-                chai.request(server)
+                chai.request(app)
                     .put('/annotation/'+newAnnotationId)
                     .send({ test: updatedField })/* TODO : add JSON depend on annotation structure */
                     .end(function(error, res){
@@ -100,7 +100,7 @@ describe('Annotations', function() {
 
     it('shouldn\'t update a SINGLE annotation on /annotation/:id PUT if annotation doesn\'t exist', function(done) {
         var annotationId = new ObjectID("000000000001");
-        chai.request(server)
+        chai.request(app)
             .put('/annotation/'+annotationId)
             .end(function(err, res){
                 res.should.have.status(404);
@@ -110,12 +110,12 @@ describe('Annotations', function() {
     });
         
     it('should delete a SINGLE annotation on /annotation/<id> DELETE', function(done) {
-        chai.request(server)
+        chai.request(app)
             .post('/annotations')
             .send({ test: "dab4" }/* TODO : add JSON depend on annotation structure */)
             .end(function(err, data) {
                 var newAnnotationId = data.body.SUCCESS._id;
-                chai.request(server)
+                chai.request(app)
                     .delete('/annotation/'+newAnnotationId)
                     .end(function(error, res){
                         res.should.have.status(200);
