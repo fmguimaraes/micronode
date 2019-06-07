@@ -10,8 +10,8 @@ class MongoDBInterface {
 
         const environment = process.env.NODE_ENV;
         const Database = Settings.Database[environment];
-        var DatabaseLink = `mongodb://${Database.user}:${Database.password}@${Database.host}${Database.name}`;
-        var db = mongoose.createConnection(DatabaseLink, this.options);
+        var DatabaseHost = `mongodb://${Database.user}:${Database.password}@${Database.host}${Database.name}`;
+        var db = mongoose.createConnection(DatabaseHost, this.options);
         db.on('error', console.error.bind(console, 'connection error:'));
         db.once('open', function callback() {
         });
@@ -26,7 +26,6 @@ class MongoDBInterface {
     }
 
     close() {
-        //console.log('MongoDBInterface.close');
         return mongoose.connection.close();
     }
 }
