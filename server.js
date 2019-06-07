@@ -7,6 +7,7 @@ let Socket = require('./utils/socket.js');
 let Actions = require('../actions/actions.js');
 let EventDispatcher = require('./utils/EventDispatcher.js');
 let Log = require('./utils/Log.js');
+
 class ApplicationService {
   constructor() {
     this.docker = new Docker({socketPath: Settings.Servers.docker || '/var/run/docker.sock'});
@@ -16,11 +17,12 @@ class ApplicationService {
     this.socket = new Socket(this);
 
     this.rest =  new RESTFacade(this);
-    this.actions =  new Actions(this);
+    this.actions =  new Actions(this);   
 
-    this.httpServer.start(); 
+    this.httpServer.start()
   }
 }
 
 let application = new ApplicationService();
 
+module.exports = application;

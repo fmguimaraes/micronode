@@ -8,24 +8,26 @@ class MongoDBInterface {
         this.model = null;
         this.options = { useNewUrlParser: true };
 
-        var db = mongoose.createConnection(`mongodb://${Settings.Database.user}:${Settings.Database.password}@${Settings.Database.host}${Settings.Database.name}`,  this.options);
+        const environment = process.env.NODE_ENV;
+        const Database = Settings.Database[environment];
+        var DatabaseHost = `mongodb://${Database.user}:${Database.password}@${Database.host}${Database.name}`;
+        var db = mongoose.createConnection(DatabaseHost, this.options);
         db.on('error', console.error.bind(console, 'connection error:'));
         db.once('open', function callback() {
         });
 
 
         var someModelSchema = new Schema(schema);
-        this.model = db.model(collection, someModelSchema, collection );
+        this.model = db.model(collection, someModelSchema, collection);
     }
-    
+
     getModel() {
         return this.model;
     }
 
     close() {
-        console.log('MongoDBInterface.close');
         return mongoose.connection.close();
     }
 }
 
-module.exports  = MongoDBInterface
+module.exports = MongoDBInterface

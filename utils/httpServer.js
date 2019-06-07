@@ -76,7 +76,6 @@ class HTTPServer {
 		if (!!routerInfo.onUploaded && !!Settings.Folders.tmp) {
 			this.uploadServer.use(router, routerInfo, this.app);
 		}
-
 		this.app.use(router);
 	}
 
