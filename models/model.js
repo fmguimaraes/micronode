@@ -5,7 +5,7 @@ class BaseModel {
     constructor() {
         this.collection  = '';
         this.initialized = false;
-        this.db =  new MongoDBInterface();
+        this.db = new MongoDBInterface();
     }
     
     init() {
@@ -16,7 +16,6 @@ class BaseModel {
 
 		this.initialized = true;
     }
-
 
     updateDBModel(db, data) {
     	for(var name in data) {
@@ -38,7 +37,6 @@ class BaseModel {
     createQuery(data) {
         var newObject = this.sanitizeData(data);
     
-
         if(!!data.id) {
           newObject._id = data.id;
           delete newObject.id;

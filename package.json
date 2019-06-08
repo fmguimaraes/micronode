@@ -25,7 +25,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "mocha --exit"
   },
   "dependencies": {
     "atob": "^2.1.2",
@@ -43,7 +44,12 @@
     "socket.io": "^2.0.3",
     "socketio-wildcard": "^2.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-html": "^1.2.3",
+    "chai-http": "^1.0.0",
+    "mocha": "^6.1.4"
+  },
   "bundleDependencies": [],
   "private": true,
   "main": "server.js"
