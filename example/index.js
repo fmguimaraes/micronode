@@ -1,15 +1,17 @@
 "use strict"
-let MicroNode = require('@fmguimaraes/micronode');
-const Settings = require('./settings');
+let Micronode = require('@fmguimaraes/micronode').Server;
+
 const Actions = require('./actions/actions');
 const Routes = require('./routes/routes');
-
+const Settings = require('./settings');
 class MicroServiceExample {
   constructor() { 
-    let routes = new Routes();
-    let actions  = new Actions(); 
+    let uService = new Micronode(Settings);
 
-    this.uService = new MicroNode(Settings, actions, routes);
+    let routes = new Routes(uService);
+    let actions  = new Actions(uService); 
+
+    uService.init(actions, routes);
   }
 }
  

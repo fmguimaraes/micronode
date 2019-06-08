@@ -3,9 +3,9 @@
 let Dummy = require('./dummy');
 
 class Routes {
-  constructor(node) {
+  constructor(server) {
     this.list = [];
-    this.list.push(new Dummy(node));
+    this.list.push(new Dummy(server));
   }
 }
 

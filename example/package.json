@@ -33,6 +33,6 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "NODE_ENV=dev nodemon index.js"
   }
 }

@@ -2,10 +2,10 @@
 var MongoDBInterface = require("../db/MongoDBInterface");
 
 class BaseModel {
-    constructor() {
+    constructor(server) {
         this.collection  = '';
         this.initialized = false;
-        this.db = new MongoDBInterface();
+        this.db = new MongoDBInterface(server.settings);
     }
     
     init() {

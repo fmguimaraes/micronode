@@ -1,19 +1,22 @@
 "use strict"
-let Route = require('../../routes/route.js');
+let Route = require('@fmguimaraes/micronode').Route;
+let DummyModel = require('../models/dummy');
 
 class Dummy extends Route {
-    constructor(app) {
-        super(app);
+    constructor(server) {
+        super(server);
+
+        this.model = new DummyModel(server);
     }
 
     init() {
         this.routes = [
-            { path: "dummy/hello", post: this.hello.bind(this) },
-            { path: "dummy/auth", post: this.authenticate.bind(this) },
-            { path: "dummy/", post: this.create.bind(this) },
-            { path: "dummy/", get: this.read.bind(this) },
-            { path: "dummy/", update: this.put.bind(this) },
-            { path: "dummy/", delete: this.delete.bind(this) },
+            { path: "/dummy/hello", post: this.hello.bind(this) },
+            { path: "/dummy/auth", post: this.authenticate.bind(this) },
+            { path: "/dummy/", post: this.create.bind(this), tokenRequired:true },
+            { path: "/dummy/", get: this.read.bind(this) },
+            { path: "/dummy/", update: this.update.bind(this) },
+            { path: "/dummy/", delete: this.delete.bind(this) },
         ];
     }
 

@@ -1,10 +1,9 @@
 "use strict"
-
-var DummyModel = require('../models/model.js');
+let Model = require('@fmguimaraes/micronode').Model;
 
 class DummyModel extends Model {
-  constructor() {
-    super();
+  constructor(server) {
+    super(server);
     this.collection = 'DummyModel';
     this.schema = {
       firstName: String, 
