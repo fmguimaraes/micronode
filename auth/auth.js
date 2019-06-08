@@ -11,7 +11,7 @@ class Auth {
         this.secret = settings.Authentication.secret;
     }
 
-    hasToken(req){
+    hasToken(req) {
         return !!req.headers['authorization'];;
     };
 
@@ -51,6 +51,7 @@ class Auth {
                     resolve(decoded)
                 }
             });
+
         });
     }
 
@@ -61,7 +62,7 @@ class Auth {
             tokenData = await this.verifyToken(token)
         }
         catch (err) {
-            throw err;
+            //  console.log(err);
         }
 
         return tokenData;
@@ -70,7 +71,6 @@ class Auth {
 
     async  validateToken(token) {
         let tokenData = await this.decryptToken(token);
-        console.log(tokenData);
 
         if (tokenData && this.customAuthentication) {
             tokenData = await this.customAuthentication(tokenData);

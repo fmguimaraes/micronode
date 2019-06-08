@@ -40,8 +40,6 @@ class Server {
  
         this.settings = settings;
         this.auth = new Auth(settings, customAuth);
-        console.log(this.auth.create24hToken('felipe-test'));
-
         this.socket = new Socket(this);
         this.httpServer = new HTTPServer(this);
         this.log = new Log(this);
