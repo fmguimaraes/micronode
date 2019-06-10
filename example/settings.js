@@ -9,6 +9,9 @@ module.exports = {
     Authentication: {
         secret: 'supersecret'
     },
+    Features : {
+        upload : true
+    },
     Folders : {
         tmp: '/tmp',
         static: [

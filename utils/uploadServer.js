@@ -10,7 +10,7 @@ const EVENTS = require('tus-node-server').EVENTS;
 
 const server = new tus.Server();
 class UploadServer {
-    constructor(httpServer, settings) {
+    constructor(settings) {
         this.settings = settings;
         this.callbackMap = {};
         this.initDataStore();
@@ -31,23 +31,21 @@ class UploadServer {
             decodedObject[list[0]] = value;
         });
 
-        let splitFilename = metadata.filename.split('.');
-        metadata.extension = (!!splitFilename[splitFilename.length - 1] ? splitFilename[splitFilename.length - 1] : '');
-
         return decodedObject;
     }
 
     static parseUploadMetadata(event) {
-        let metadata = decodeObject(event);
+        let metadata = this.decodeObject(event.file.upload_metadata);
         const splitFilename = metadata.filename.split('.');
+        
         metadata.extension = (!!splitFilename[splitFilename.length - 1] ? splitFilename[splitFilename.length - 1] : '');
 
         metadata = {
             ...metadata,
-            name: evt.file.id,
+            name: metadata.file.id,
             update: metadata.update === 'true',
             originalName: metadata.filename,
-            length: evt.file.upload_length,
+            length: metadata.file.upload_length,
         }
 
         return metadata;

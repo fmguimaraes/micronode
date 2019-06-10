@@ -4,7 +4,7 @@ let Express = require('express');
 let bodyParser = require('body-parser');
 let http = require('http');
 let serveIndex = require('serve-index')
-// let UploadServer = require('./uploadServer');
+let UploadServer = require('./uploadServer');
 
 
 class HTTPServer {
@@ -34,7 +34,7 @@ class HTTPServer {
 
 	configureUploadServer(app) {
 		if (!!this.settings.Features && !!this.settings.Features.upload) {
-			// this.uploadServer = new UploadServer(app);
+			this.uploadServer = new UploadServer(this.settings);
 		}
 	}
 
