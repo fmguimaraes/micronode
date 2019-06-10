@@ -5,14 +5,13 @@ const assert = require('assert');
 const express = require('express');
 const atob = require('atob');
 const tus = require('tus-node-server');
-const data_store = process.env.DATA_STORE || 'FileStore';
+const data_store =  'FileStore';
 const EVENTS = require('tus-node-server').EVENTS;
 
 const server = new tus.Server();
 class UploadServer {
     constructor(settings) {
         this.settings = settings;
-        this.callbackMap = {};
         this.initDataStore();
 
         this.uploadApp = express();
