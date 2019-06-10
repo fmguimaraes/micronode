@@ -1,28 +1,47 @@
 "use strict"
-let Docker = require('dockerode');
-const Settings = require('../settings');
-let HTTPServer = require('./utils/httpServer.js');
-let RESTFacade = require('./routes/restFacade.js');
-let Socket = require('./utils/socket.js');
-let Actions = require('../actions/actions.js');
-let EventDispatcher = require('./utils/EventDispatcher.js');
-let Log = require('./utils/Log.js');
 
-class ApplicationService {
-  constructor() {
-    this.docker = new Docker({socketPath: Settings.Servers.docker || '/var/run/docker.sock'});
-    this.httpServer = new HTTPServer(this);
-    this.log = new Log(this);
-    this.eventEmitter = new EventDispatcher(this);
-    this.socket = new Socket(this);
+const HTTPServer = require('./utils/httpServer');
+const RESTFacade = require('./routes/restFacade');
+const Socket = require('./utils/socket.js');
+const EventDispatcher = require('./utils/EventDispatcher');
+const Log = require('./utils/Log.js');
+const Auth = require('./auth/auth')
+const Errors = require('./constants/errors')
 
-    this.rest =  new RESTFacade(this);
-    this.actions =  new Actions(this);   
+class Server {
+    constructor(settings, customAuth) {
+        if (!settings) {
+            throw Errors.INVALID_SETTINGS;
+        }
 
-    this.httpServer.start()
-  }
+        this.settings = settings;
+        this.auth = new Auth(settings, customAuth);
+        this.socket = new Socket(this);
+        this.httpServer = new HTTPServer(this);
+        this.log = new Log(this);
+        this.eventEmitter = new EventDispatcher(this);
+    }
+
+    isValidInput(actions, routes) {
+        if (!actions) {
+            throw Errors.INVALID_ACTIONS;
+        } else if (!routes) {
+            throw Errors.INVALID_ROUTES;
+        }
+
+        return true;
+    }
+
+    init(actions, routes) {
+        if (this.isValidInput(actions, routes)) {
+            this.routes = routes;
+            this.actions = actions;
+
+            this.rest = new RESTFacade(this);
+
+            this.httpServer.start();
+        }
+    }
 }
 
-let application = new ApplicationService();
-
-module.exports = application;
+module.exports = Server;

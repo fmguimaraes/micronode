@@ -9,6 +9,12 @@ module.exports = {
     Authentication: {
         secret: 'supersecret'
     },
+    Folders : {
+        tmp: '/tmp',
+        static: [
+            { alias: '/files', location: '/../files/' }
+        ],
+    },
     Database: {
         test: {
             name: 'machtwo',
