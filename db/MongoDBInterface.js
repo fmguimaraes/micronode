@@ -16,7 +16,6 @@ class MongoDBInterface {
         db.once('open', function callback() {
         });
 
-
         var someModelSchema = new Schema(schema);
         this.model = db.model(collection, someModelSchema, collection);
     }
