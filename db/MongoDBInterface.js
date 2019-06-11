@@ -25,6 +25,10 @@ class MongoDBInterface {
         return this.model;
     }
 
+    getSchema() {
+        return Schema;
+    }
+
     close() {
         return mongoose.connection.close();
     }
