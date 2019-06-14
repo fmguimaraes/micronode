@@ -16,13 +16,16 @@ class MongoDBInterface {
         db.once('open', function callback() {
         });
 
-
         var someModelSchema = new Schema(schema);
         this.model = db.model(collection, someModelSchema, collection);
     }
 
     getModel() {
         return this.model;
+    }
+
+    getSchema() {
+        return Schema;
     }
 
     close() {

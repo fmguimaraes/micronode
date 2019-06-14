@@ -21,7 +21,8 @@
   },
   "license": "ISC",
   "scripts": {
-    "start": "node server.js",
+    "start": "export NODE_ENV=dev && node server.js",
+    "test-postman" : "export NODE_ENV=test && nodemon server.js",
     "test": "mocha --exit"
   },
   "dependencies": {

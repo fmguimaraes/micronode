@@ -6,6 +6,7 @@ class BaseModel {
         this.collection  = '';
         this.initialized = false;
         this.db = new MongoDBInterface();
+        this.dbSchema = this.db.getSchema();
     }
     
     init() {
