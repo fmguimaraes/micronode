@@ -22,6 +22,10 @@ class Auth {
     };
 
 
+    comparePasswords(password, dbPassword) {
+        return (!!password && !!dbPassword) ? bcrypt.compareSync(password, dbPassword) : false;
+    }
+
     decrypt(token) {
         var base64Url = token.split('.')[1];
         var base64 = base64Url.replace('-', '+').replace('_', '/');
