@@ -34,6 +34,19 @@ class BaseModel {
         return Object.assign({},data);
     };
 
+    JSONFlatten(json, current) {
+        for(var key in json) {
+            var value = json[key];
+            var newKey = (current ? current + "." + key : key);
+            if(value && value.constructor.name === "Object") {
+                this.JSONFlatten(value, newKey);
+            } else {
+                this.newJson[newKey] = value;
+            }
+        }
+        return this.newJson;
+    };
+
     createQuery(data) {
         var newObject = this.sanitizeData(data);
     
@@ -135,8 +148,12 @@ class BaseModel {
     }
 
     async update(query, body) {
-        body = this.sanitizeData(body);
         var self = this;
+        this.newJson = {};
+        
+        body = this.sanitizeData(body);
+        body = this.JSONFlatten({... body});
+        
         this.init();
         return new Promise(function(resolve, reject) {
             self.DBModel.updateOne(query, body, function(err, data) {
