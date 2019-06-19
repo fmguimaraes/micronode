@@ -160,7 +160,7 @@ class BaseModel {
             if(err) {
                 reject({"error" : true, "data": err});  
             } else {
-                resolve(body);
+                resolve(data);
             }
             self.closeConnection();
             });
