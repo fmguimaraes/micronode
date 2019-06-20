@@ -103,11 +103,10 @@ class BaseModel {
     async read(query) {
         var self = this;
         return new Promise(function(resolve, reject) {
-                var response = null;
                 self.init(); 
                 self.DBModel.find(query,function(err, data){
                 if(err) {
-                    reject({"error" : true,"message" : "Error fetching data", "errorMsg:" : err});  
+                    reject({"error" : true, "message" : "Error fetching data", "errorMsg:" : err});  
                 } else {
                     resolve(data);
                 }
@@ -157,12 +156,12 @@ class BaseModel {
         this.init();
         return new Promise(function(resolve, reject) {
             self.DBModel.updateOne(query, body, function(err, data) {
-            if(err) {
-                reject({"error" : true, "data": err});  
-            } else {
-                resolve(data);
-            }
-            self.closeConnection();
+                if(err) {
+                    reject({"error" : true, "data" : data});  
+                } else {
+                    resolve({"body" : body, "data" : data});
+                }
+                self.closeConnection();
             });
         });
 
@@ -175,7 +174,7 @@ class BaseModel {
         return new Promise(function(resolve, reject) {
             self.DBModel.findOneAndUpdate(id, body, function(err, data) {
                 if(err) {
-                    reject({"error" : 1, "data": err});  
+                    reject({"error" : true, "data": err});  
                 } else {
                     resolve(Object.assign({}, body));
                 }
@@ -197,9 +196,9 @@ class BaseModel {
                 } else {
                     self.DBModel.remove(query,function(err){
                         if(err) {
-                            reject({"error" : true,"message" : "Error deleting data", "errorMsg:" : err});  
+                            reject({"error" : true, "message" : "Error deleting data", "errorMsg:" : err});  
                         } else {
-                            resolve(Object.assign(query,{"error" : false,"message" : "Delete success."}));
+                            resolve(Object.assign(query,{"error" : false, "message" : "Delete success."}));
                         }
                         self.closeConnection();
                     });
