@@ -157,7 +157,7 @@ class BaseModel {
         return new Promise(function(resolve, reject) {
             self.DBModel.updateOne(query, body, function(err, data) {
                 if(err) {
-                    reject({"error" : true, "data" : data});  
+                    reject({"error" : true, "data" : data, "type" : err.name});  
                 } else {
                     resolve({"body" : body, "data" : data});
                 }
