@@ -1,18 +1,18 @@
 var ioserver = require('socket.io');
 var middleware = require('socketio-wildcard')();
 var M2Object = require('../M2Object.js');
-var Settings = require('../../settings');
 var io = require('socket.io-client');
 class Socket extends M2Object {
     constructor(app) {
         super(app)
+        this.settings = app.settings;
         this.socketMap = {};
         this.lazyInitializationCallbacks = [];
         this.lazyBroadcast = [];
     }
 
     init() {
-        if (Settings.Server.messageBroker) {
+        if (this.settings.Server.messageBroker) {
             this.startServer();
         }
 
@@ -34,14 +34,16 @@ class Socket extends M2Object {
     }
 
     startClient() {
-        console.log(Settings.Server.name, 'start client');
-        this.socketClient = io(Settings.Servers.messageBroker);
-        this.socketClient.on('connect', this.onSocketConnected.bind(this));
+        if (!!this.settings.Servers && !!this.settings.Servers.messageBroker) {
+            console.log(this.settings.Server.name, 'start client');
+            this.socketClient = io(this.settings.Servers.messageBroker);
+            this.socketClient.on('connect', this.onSocketConnected.bind(this));
 
 
 
-        for (var event in this.lazyInitializationCallbacks) {
-            this.socketClient.on(event, this.lazyInitializationCallbacks[event]);
+            for (var event in this.lazyInitializationCallbacks) {
+                this.socketClient.on(event, this.lazyInitializationCallbacks[event]);
+            }
         }
     }
 
@@ -97,7 +99,7 @@ class Socket extends M2Object {
             console.log('[SOCKET][EMIT]', message, data);
 
             if (!data.producer) {
-                data.producer = Settings.Server.name;
+                data.producer = this.settings.Server.name;
             }
 
             this.socket.emit(message, data);
