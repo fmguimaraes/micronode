@@ -13,7 +13,7 @@ module.exports = {
         upload : true
     },
     Folders : {
-        tmp: '/tmp',
+        tmp: '/tmp', /* should be placed inside application's file */
         static: [
             { alias: '/files', location: '../../files/' }
         ],
