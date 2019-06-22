@@ -1,27 +1,33 @@
 {
-  "name": "base-crud-service",
+  "name": "@fmguimaraes/micronode",
   "version": "0.0.1",
-  "description": "CRUD base service",
+  "description": "Micro Service Framework",
   "keywords": [
-    "auth"
+    "microservices",
+    "npm",
+    "server",
+    "example",
+    "fmguimaraes"
   ],
   "author": {
-    "name": "Felipe Machado Guimaraes",
+    "name": "Felipe Machado Guimarães",
     "email": "machado.guimaraes@gmail.com",
     "url": "http://www.felipeguimaraes.io/"
   },
   "homepage": "http://www.felipeguimaraes.io/",
   "repository": {
     "type": "git",
-    "url": "git@gitlab.com:fmguimaraes/mach-two/base-service.git"
+    "url": "git@github.com:fmguimaraes/micronode.git"
   },
   "engines": {
     "node": ">= 6.0.0",
     "npm": ">= 1.0.0"
   },
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
-    "start": "node server.js"
+    "start": "export NODE_ENV=dev && node server.js",
+    "test-postman" : "export NODE_ENV=test && nodemon server.js",
+    "test": "mocha --exit"
   },
   "dependencies": {
     "atob": "^2.1.2",
@@ -31,17 +37,22 @@
     "browserify": "^16.2.2",
     "dockerode": "^2.5.8",
     "express": "~4.15.4",
-    "isomorphic-fetch": "^2.2.1",
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.2.17",
     "request": "2.88.0",
     "rimraf": "^2.6.3",
     "serve-index": "^1.9.1",
     "socket.io": "^2.0.3",
-    "socketio-wildcard": "^2.0.0"
+    "socketio-wildcard": "^2.0.0",
+    "tus-node-server": "^0.3.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-html": "^1.2.3",
+    "chai-http": "^1.0.0",
+    "mocha": "^6.1.4"
+  },
   "bundleDependencies": [],
   "private": true,
-  "main": "server.js"
+  "main": "index.js"
 }

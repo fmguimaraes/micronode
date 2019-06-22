@@ -2,10 +2,11 @@
 var MongoDBInterface = require("../db/MongoDBInterface");
 
 class BaseModel {
-    constructor() {
+    constructor(server) {
         this.collection  = '';
         this.initialized = false;
-        this.db =  new MongoDBInterface();
+        this.db = new MongoDBInterface();
+        this.dbSchema = this.db.getSchema();
     }
     
     init() {
@@ -16,7 +17,6 @@ class BaseModel {
 
 		this.initialized = true;
     }
-
 
     updateDBModel(db, data) {
     	for(var name in data) {
@@ -35,10 +35,22 @@ class BaseModel {
         return Object.assign({},data);
     };
 
+    JSONFlatten(json, current) {
+        for(var key in json) {
+            var value = json[key];
+            var newKey = (current ? current + "." + key : key);
+            if(value && value.constructor.name === "Object") {
+                this.JSONFlatten(value, newKey);
+            } else {
+                this.newJson[newKey] = value;
+            }
+        }
+        return this.newJson;
+    };
+
     createQuery(data) {
         var newObject = this.sanitizeData(data);
     
-
         if(!!data.id) {
           newObject._id = data.id;
           delete newObject.id;
@@ -92,11 +104,10 @@ class BaseModel {
     async read(query) {
         var self = this;
         return new Promise(function(resolve, reject) {
-                var response = null;
                 self.init(); 
                 self.DBModel.find(query,function(err, data){
                 if(err) {
-                    reject({"error" : true,"message" : "Error fetching data", "errorMsg:" : err});  
+                    reject({"error" : true, "message" : "Error fetching data", "errorMsg:" : err});  
                 } else {
                     resolve(data);
                 }
@@ -137,17 +148,21 @@ class BaseModel {
     }
 
     async update(query, body) {
-        body = this.sanitizeData(body);
         var self = this;
+        this.newJson = {};
+        
+        body = this.sanitizeData(body);
+        body = this.JSONFlatten({... body});
+        
         this.init();
         return new Promise(function(resolve, reject) {
             self.DBModel.updateOne(query, body, function(err, data) {
-            if(err) {
-                reject({"error" : true, "data": err});  
-            } else {
-                resolve(body);
-            }
-            self.closeConnection();
+                if(err) {
+                    reject({"error" : true, "data" : data, "type" : err.name});  
+                } else {
+                    resolve({"body" : body, "data" : data});
+                }
+                self.closeConnection();
             });
         });
 
@@ -160,7 +175,7 @@ class BaseModel {
         return new Promise(function(resolve, reject) {
             self.DBModel.findOneAndUpdate(id, body, function(err, data) {
                 if(err) {
-                    reject({"error" : 1, "data": err});  
+                    reject({"error" : true, "data": err});  
                 } else {
                     resolve(Object.assign({}, body));
                 }
@@ -182,9 +197,9 @@ class BaseModel {
                 } else {
                     self.DBModel.remove(query,function(err){
                         if(err) {
-                            reject({"error" : true,"message" : "Error deleting data", "errorMsg:" : err});  
+                            reject({"error" : true, "message" : "Error deleting data", "errorMsg:" : err});  
                         } else {
-                            resolve(Object.assign(query,{"error" : false,"message" : "Delete success."}));
+                            resolve(Object.assign(query,{"error" : false, "message" : "Delete success."}));
                         }
                         self.closeConnection();
                     });

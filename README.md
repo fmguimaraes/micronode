@@ -53,9 +53,3 @@ npm install
 ```
 
 configure settings.js to specify correct database address, user and password.
-
-## Run
-```bash
-cd /path/to/dev/your-application
-nodemon micronode/server.js
-```

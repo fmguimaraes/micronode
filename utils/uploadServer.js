@@ -3,22 +3,16 @@
 const path = require('path');
 const assert = require('assert');
 const express = require('express');
-var Settings = require('../../settings');
-var atob = require('atob');
-const Server = require('../tus-node-server/index').Server;
-const FileStore = require('../tus-node-server/index').FileStore;
-const GCSDataStore = require('../tus-node-server/index').GCSDataStore;
-const S3Store = require('../tus-node-server/index').S3Store;
-const EVENTS = require('../tus-node-server/index').EVENTS;
+const atob = require('atob');
+const tus = require('tus-node-server');
+const data_store = 'FileStore';
+const EVENTS = require('tus-node-server').EVENTS;
 
-
-const data_store = process.env.DATA_STORE || 'FileStore';
-const server = new Server();
-
-
+const server = new tus.Server();
 class UploadServer {
-    constructor(httpServer) {
-        this.callbackMap = {};
+    constructor(settings) {
+        this.settings = settings;
+        this.callbacks = []
         this.initDataStore();
 
         this.uploadApp = express();
@@ -26,30 +20,46 @@ class UploadServer {
 
     }
 
-    static parseUploadMetadata(event) {
+    static decodeObject(event) {
         let list = event.split(',');
         let decodedObject = {};
 
         list.forEach((token, index) => {
             let list = token.split(' ');
-            let value = !!list[1] ?  atob(list[1]) : null;
- 
+            let value = !!list[1] ? atob(list[1]) : null;
+
             decodedObject[list[0]] = value;
         });
 
-        return  decodedObject;
+        return decodedObject;
+    }
+
+    static parseUploadMetadata(event) {
+        let metadata = this.decodeObject(event.file.upload_metadata);
+        const splitFilename = metadata.filename.split('.');
+        metadata.extension = (!!splitFilename[splitFilename.length - 1] ? splitFilename[splitFilename.length - 1] : '');
+        metadata.originalFilename = metadata.filename;
+        delete metadata.filename;
+
+        return {
+            id: event.file.id,
+            filename: `${event.file.id}.${metadata.extension}`,
+            upload_length: event.file.upload_length,
+            metadata: metadata
+        };
     };
 
     use(router, routerInfo, app) {
         app.use(router, [this.uploadApp]);
+        console.log(routerInfo.onUploaded);
         server.on(EVENTS.EVENT_UPLOAD_COMPLETE, routerInfo.onUploaded);
     }
 
     initDataStore() {
         switch (data_store) {
             case 'GCSDataStore':
-                server.datastore = new GCSDataStore({
-                    path: Settings.Folders.tmp,
+                server.datastore = new tus.GCSDataStore({
+                    path: this.settings.Folders.tmp,
                     projectId: 'vimeo-open-source',
                     keyFilename: path.resolve(__dirname, '../keyfile.json'),
                     bucket: 'tus-node-server',
@@ -62,8 +72,8 @@ class UploadServer {
                 assert.ok(process.env.AWS_BUCKET, 'environment variable `AWS_BUCKET` must be set');
                 assert.ok(process.env.AWS_REGION, 'environment variable `AWS_REGION` must be set');
 
-                server.datastore = new S3Store({
-                    path: Settings.Folders.tmp,
+                server.datastore = new tus.S3Store({
+                    path: this.settings.Folders.tmp,
                     bucket: process.env.AWS_BUCKET,
                     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
                     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -73,8 +83,9 @@ class UploadServer {
                 break;
 
             default:
-                server.datastore = new FileStore({
-                    path: Settings.Folders.tmp,
+                console.log(this.settings.Folders.tmp);
+                server.datastore = new tus.FileStore({
+                    path: this.settings.Folders.tmp,
                 });
         }
     }

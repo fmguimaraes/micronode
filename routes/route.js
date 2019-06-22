@@ -1,54 +1,37 @@
 "use strict"
 var M2Object = require('../M2Object.js');
-var Auth = require('../auth/AuthController')
 var path = require('path');
 class Router extends M2Object {
-  constructor(node) {
-    super(node);
-    this.callbackMap = []
-    this.router = node.httpServer.createRouter();
+  constructor(server) {
+    super(server);
+    this.router = server.httpServer.createRouter();
     this.model = null;
     this.result = null;
     this.response = null;
     this.upload = false;
-    this.auth = Auth;
-
-    this.init();
+    this.auth = server.auth;
   }
 
   initialize(httpServer) {
     let self = this;
     this.routes.forEach(function (routerInfo, index, array) {
 
-      self.processRouter(routerInfo, self, 'get');
-      self.processRouter(routerInfo, self, 'post');
-      self.processRouter(routerInfo, self, 'put');
-      self.processRouter(routerInfo, self, 'delete');
-      self.processStatic(routerInfo, self);
+      self.processRoute(routerInfo, self, 'get');
+      self.processRoute(routerInfo, self, 'post');
+      self.processRoute(routerInfo, self, 'put');
+      self.processRoute(routerInfo, self, 'delete');
 
       httpServer.use(self.router, routerInfo);
     });
   }
 
-  processStatic(routerInfo, self) {
-    if (!!routerInfo.static) {
-      console.log('[Router]', 'static', routerInfo.path,routerInfo.static);
-      let isTokenRequired = !!routerInfo.tokenRequired ? self.auth.tokenRequired : (req, res, next) => { next() };
-
-      self.router.route(routerInfo.path)['get'](isTokenRequired, function (req, res, next) {
-        res.sendFile(path.resolve(__dirname + routerInfo.static));
-      });
-
-    }
-  }
-
-  processRouter(routerInfo, self, method) {
+  processRoute(routerInfo, self, method) {
     let isTokenRequired = !!routerInfo.tokenRequired ? self.auth.tokenRequired : (req, res, next) => { next() };
 
     if (!!routerInfo[method]) {
       console.log('[Router]', method, routerInfo.path);
 
-      self.router.route(routerInfo.path)[method](isTokenRequired, function (req, res, next) {
+      self.router.route(routerInfo.path)[method](isTokenRequired.bind(self.auth), function (req, res, next) {
         routerInfo[method](req, res, next);
       });
     }
