@@ -5,13 +5,14 @@ const assert = require('assert');
 const express = require('express');
 const atob = require('atob');
 const tus = require('tus-node-server');
-const data_store =  'FileStore';
+const data_store = 'FileStore';
 const EVENTS = require('tus-node-server').EVENTS;
 
 const server = new tus.Server();
 class UploadServer {
     constructor(settings) {
         this.settings = settings;
+        this.callbacks = []
         this.initDataStore();
 
         this.uploadApp = express();
@@ -36,22 +37,21 @@ class UploadServer {
     static parseUploadMetadata(event) {
         let metadata = this.decodeObject(event.file.upload_metadata);
         const splitFilename = metadata.filename.split('.');
-        
         metadata.extension = (!!splitFilename[splitFilename.length - 1] ? splitFilename[splitFilename.length - 1] : '');
+        metadata.originalFilename = metadata.filename;
+        delete metadata.filename;
 
-        metadata = {
-            ...metadata,
-            name: metadata.file.id,
-            update: metadata.update === 'true',
-            originalName: metadata.filename,
-            length: metadata.file.upload_length,
-        }
-
-        return metadata;
+        return {
+            id: event.file.id,
+            filename: `${event.file.id}.${metadata.extension}`,
+            upload_length: event.file.upload_length,
+            metadata: metadata
+        };
     };
 
     use(router, routerInfo, app) {
         app.use(router, [this.uploadApp]);
+        console.log(routerInfo.onUploaded);
         server.on(EVENTS.EVENT_UPLOAD_COMPLETE, routerInfo.onUploaded);
     }
 
@@ -83,6 +83,7 @@ class UploadServer {
                 break;
 
             default:
+                console.log(this.settings.Folders.tmp);
                 server.datastore = new tus.FileStore({
                     path: this.settings.Folders.tmp,
                 });

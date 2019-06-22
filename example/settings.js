@@ -15,7 +15,7 @@ module.exports = {
     Folders : {
         tmp: '/tmp',
         static: [
-            { alias: '/files', location: '/../files/' }
+            { alias: '/files', location: '../../files/' }
         ],
     },
     Database: {

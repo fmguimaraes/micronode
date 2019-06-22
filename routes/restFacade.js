@@ -6,8 +6,8 @@ class RestFacade {
     this.routes = node.routes;
     console.log('RestFacade.constructor');
 
-    this.routes.list.forEach((router) => {
-      router.initialize(this.httpServer);
+    this.routes.list.forEach((route) => {
+      route.initialize(this.httpServer);
     });
   }
 }

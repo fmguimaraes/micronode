@@ -4,12 +4,9 @@ let Route = require('@fmguimaraes/micronode').Route;
 let UploadUtils = require('@fmguimaraes/micronode').UploadUtils;
 
 class Upload extends Route {
-    constructor(node) {
-        super(node);
+    constructor(server) {
+        super(server);
 
-    }
-
-    init() {
         this.routes = [
             { path: "upload/", onUploaded: this.onUploaded.bind(this), tokenRequired: false },
         ];
