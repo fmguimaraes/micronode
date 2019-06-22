@@ -5,7 +5,8 @@ class BaseModel {
     constructor(server) {
         this.collection  = '';
         this.initialized = false;
-        this.db = new MongoDBInterface(server.settings);
+        this.db = new MongoDBInterface();
+        this.dbSchema = this.db.getSchema();
     }
     
     init() {
