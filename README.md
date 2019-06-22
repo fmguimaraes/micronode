@@ -60,3 +60,9 @@ configure settings.js to specify correct database address, user and password.
 cd /home/ubuntu/dev/your application/base-service
 nodemon base-service/server.js
 ```
+
+```bash
+1. git submodule deinit -f -- a/submodule    
+2. rm -rf .git/modules/a/submodule
+3. git rm -f a/submodule
+```

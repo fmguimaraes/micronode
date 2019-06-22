@@ -1,18 +1,16 @@
 "use strict"
 
-var Express = require('express');
-var bodyParser = require('body-parser');
-var http = require('http');
-
-var Settings = require('../../settings');
-var serveIndex = require('serve-index')
+let Express = require('express');
+let bodyParser = require('body-parser');
+let http = require('http');
+let serveIndex = require('serve-index')
 let UploadServer = require('./uploadServer');
-var path = require('path');
-const fs = require('fs');
+
 
 class HTTPServer {
 	constructor(node) {
 		this.node = node;
+		this.settings =  node.settings;
 		this.app = Express();
 		this.bodyParser = bodyParser;
 		this.http = http;
@@ -24,17 +22,19 @@ class HTTPServer {
 		this.configureStaticServer(this.app);
 	}
 	configureStaticServer(app) {
-		if (!!Settings.Folders && !!Settings.Folders.static) {
-			Settings.Folders.static.forEach((staticFolder) => {
-				let folder = __dirname + staticFolder.location;
+		if (!!this.settings.Folders && !!this.settings.Folders.static) {
+			this.settings.Folders.static.forEach((staticFolder) => {
+				console.log(`[Router] static ${staticFolder.alias} location:${staticFolder.location} `);
+
+				let folder = __dirname + '/../../../../' + staticFolder.location;
 				app.use(staticFolder.alias, Express.static(folder), serveIndex(folder, { 'icons': true }))
 			})
 		}
 	};
 
 	configureUploadServer(app) {
-		if (!!Settings.Features && !!Settings.Features.upload) {
-			this.uploadServer = new UploadServer(app);
+		if (!!this.settings.Features && !!this.settings.Features.upload) {
+			this.uploadServer = new UploadServer(this.settings);
 		}
 	}
 
@@ -61,8 +61,8 @@ class HTTPServer {
 
 	start() {
 		var self = this;
-		this.server = http.createServer(this.app).listen(Settings.Server.port, Settings.Server.host , function () {
-			console.log(Settings.Server.name  + ' service running with Express server listening on:' + Settings.Server.host + ':' + Settings.Server.port);
+		this.server = http.createServer(this.app).listen(this.settings.Server.port, this.settings.Server.host , function () {
+			console.log(self.settings.Server.name  + ' service running with Express server listening on:' + self.settings.Server.host + ':' + self.settings.Server.port);
 		});
 
 		this.node.socket.init();
@@ -73,7 +73,7 @@ class HTTPServer {
 	}
 
 	use(router, routerInfo) {
-		if (!!routerInfo.onUploaded && !!Settings.Folders.tmp) {
+		if (!!routerInfo.onUploaded && !!this.settings.Folders.tmp) {
 			this.uploadServer.use(router, routerInfo, this.app);
 		}
 		this.app.use(router);

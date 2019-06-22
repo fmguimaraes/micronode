@@ -1,8 +1,8 @@
 "use strict"
-var Settings = require('../../settings');
 var io = require('socket.io-client');
 class Log {
     constructor(app) {
+        this.settings = app.settings;
         this.app = app;
     }
     onSocketConnected() {
@@ -10,7 +10,7 @@ class Log {
     }
 
     debug(message, data = {}) {
-        this.log('log', { level: 0, producer: Settings.Server.name, message: message, ...data });
+        this.log('log', { level: 0, producer: this.settings.Server.name, message: message, ...data });
     }
 
     info(message, data = {}) {
@@ -26,7 +26,7 @@ class Log {
     }
 
     log(event, data) {
-        if(!!this.app.socket) {
+        if (!!this.app.socket) {
             this.app.socket.emit(event, data);
         }
 
