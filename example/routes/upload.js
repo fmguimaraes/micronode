@@ -8,7 +8,7 @@ class Upload extends Route {
         super(server);
 
         this.routes = [
-            { path: "upload/", onUploaded: this.onUploaded.bind(this), tokenRequired: false },
+            { path: "/upload", onUploaded: this.onUploaded.bind(this), tokenRequired: false },
         ];
     }
 
