@@ -26,8 +26,10 @@
   "license": "MIT",
   "scripts": {
     "start": "export NODE_ENV=dev && node server.js",
-    "test-postman" : "export NODE_ENV=test && nodemon server.js",
-    "test": "mocha --exit"
+    "test-postman": "export NODE_ENV=test && nodemon server.js",
+    "test": "mocha --exit",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "atob": "^2.1.2",
@@ -44,7 +46,8 @@
     "serve-index": "^1.9.1",
     "socket.io": "^2.0.3",
     "socketio-wildcard": "^2.0.0",
-    "tus-node-server": "^0.3.2"
+    "tus-node-server": "^0.3.2",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
@@ -54,5 +57,6 @@
   },
   "bundleDependencies": [],
   "private": true,
-  "main": "index.js"
+  "main": "index.js",
+  "snyk": true
 }
