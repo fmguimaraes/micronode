@@ -46,7 +46,6 @@ class Router extends M2Object {
       }
   }
 
-
   createRouters() {
     return [];
   }
