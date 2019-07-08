@@ -20,6 +20,7 @@ class Router extends M2Object {
       self.processRoute(routerInfo, self, 'post');
       self.processRoute(routerInfo, self, 'put');
       self.processRoute(routerInfo, self, 'delete');
+      self.processRouteUse(routerInfo, self, 'use');
 
       httpServer.use(self.router, routerInfo);
     });
@@ -36,6 +37,15 @@ class Router extends M2Object {
       });
     }
   }
+
+  processRouteUse(routerInfo, self, method) {
+    if (!!routerInfo[method]) {
+        console.log('[Router]', method, routerInfo.path);
+        self.router.use(routerInfo.path, routerInfo[method]);
+        self.router.route(routerInfo.path)[routerInfo.callBackFunctionType]( routerInfo.callBackFunction );
+      }
+  }
+
 
   createRouters() {
     return [];
