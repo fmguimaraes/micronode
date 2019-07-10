@@ -71,11 +71,10 @@ class BaseModel {
         return new Promise(function(resolve, reject) {
             self.init();
             var dbModel = new self.DBModel();
-            var response = {};
             dbModel = self.updateDBModel(dbModel, data);
             dbModel.save(function(err, data){
                 if(err) {
-                    reject({"error" : true,"message" : "Error saving data", "errorMsg:" : err});  
+                    reject({"error" : true, "message" : "Error saving data", "errorMsg" : err});  
                 } else {
                     data =  !!data ? data._doc : data;
                     resolve(Object.assign({}, data));
@@ -91,7 +90,7 @@ class BaseModel {
             self.init();
             self.DBModelDB.get().aggregate(query, function (err, data) {
                if(err) {
-                    reject({"error" : true,"message" : "Error retrieving aggregated data", "errorMsg:" : err});  
+                    reject({"error" : true,"message" : "Error retrieving aggregated data", "errorMsg" : err});  
                 } else {
                     data =  !!data ? data._doc : data;
                     resolve(Object.assign({}, data));
@@ -107,7 +106,7 @@ class BaseModel {
                 self.init(); 
                 self.DBModel.find(query,function(err, data){
                 if(err) {
-                    reject({"error" : true, "message" : "Error fetching data", "errorMsg:" : err});  
+                    reject({"error" : true, "message" : "Error fetching data", "errorMsg" : err});  
                 } else {
                     resolve(data);
                 }
@@ -122,7 +121,7 @@ class BaseModel {
         return new Promise(function(resolve, reject) { 
                 self.DBModel.findOne(query,function(err, data){
                 if(err) {
-                    reject({"error" : true,"message" : "Error fetching data", "errorMsg:" : err});  
+                    reject({"error" : true,"message" : "Error fetching data", "errorMsg" : err});  
                 } else {
                     data = !!data && !!data._doc ? data._doc : data;
                     resolve(data);
@@ -138,7 +137,7 @@ class BaseModel {
         return new Promise(function(resolve, reject) {
             self.DBModel.findById(id, function (err, data) {
                 if(err) {
-                    reject({"error" : true,"message" : "Error updating data", "errorMsg:" : err});  
+                    reject({"error" : true,"message" : "Error updating data", "errorMsg" : err});  
                 } else {
                     resolve(Object.assign({}, data));
                 }
@@ -192,12 +191,12 @@ class BaseModel {
             self.init();
             self.DBModel.find(query,function(err, dbModel) {
                 if(err) {
-                    response = {"error" : true, "message" : "Error fetching data", "errMsg:" : err};
+                    response = {"error" : true, "message" : "Error fetching data", "errMsg" : err};
                     self.closeConnection();
                 } else {
                     self.DBModel.remove(query,function(err){
                         if(err) {
-                            reject({"error" : true, "message" : "Error deleting data", "errorMsg:" : err});  
+                            reject({"error" : true, "message" : "Error deleting data", "errorMsg" : err});  
                         } else {
                             resolve(Object.assign(query,{"error" : false, "message" : "Delete success."}));
                         }
