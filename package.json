@@ -47,7 +47,7 @@
     "socket.io": "^2.0.3",
     "socketio-wildcard": "^2.0.0",
     "tus-node-server": "^0.3.2",
-    "snyk": "^1.189.0"
+    "snyk": "^1.194.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
