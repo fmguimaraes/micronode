@@ -60,7 +60,6 @@ class Action extends M2Object {
             update_result = err;
         }
 
-        console.log(update_result);
         if (!!update_result.data && update_result.data.nModified > 0) {
             try {
                 result = await this.model.readOne(readOneQuery);
@@ -77,9 +76,12 @@ class Action extends M2Object {
                 code = RESPONSES.HTTP_STATUS.CONFLICT;
                 result = RESPONSES.INVALID_CHARACTER;
             }
-        } else {
+        } else if(update_result.error && update_result.error == true) {
             code = RESPONSES.HTTP_STATUS.INTERNAL_SERVER_ERROR;
             result = RESPONSES.UNKNOW_ERROR;
+        } else {
+            code = RESPONSES.HTTP_STATUS.NOT_FOUND;
+            result = this.unknowObjectError;
         }
 
         this.sendAnswer(res, code, result);
