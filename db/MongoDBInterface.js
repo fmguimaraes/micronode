@@ -17,6 +17,7 @@ class MongoDBInterface {
         var db = mongoose.createConnection(DatabaseHost, this.options);
         db.on('error', console.error.bind(console, 'connection error:'));
         db.once('open', function callback() {
+            
         });
 
         var someModelSchema = new Schema(schema);
