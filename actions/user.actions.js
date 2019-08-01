@@ -63,11 +63,9 @@ class UserActions extends Action {
         }
 
         res.status(code).send(result)
-
-
     }
 
-    async  signout(req, res) {
+    async signout(req, res) {
         let code, result, reason;
         try {
             try {

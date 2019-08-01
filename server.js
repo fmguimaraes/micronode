@@ -5,8 +5,9 @@ const RESTFacade = require('./routes/restFacade');
 const Socket = require('./utils/socket.js');
 const EventDispatcher = require('./utils/EventDispatcher');
 const Log = require('./utils/Log.js');
-const Auth = require('./auth/auth')
-const Errors = require('./constants/errors')
+const Auth = require('./auth/auth');
+const Errors = require('./constants/errors');
+const Docker = require('dockerode');
 
 class Server {
     constructor(settings, customAuth) {
@@ -15,6 +16,7 @@ class Server {
         }
 
         this.settings = settings;
+        this.docker = new Docker({ socketPath: this.settings.Servers.docker});
         this.auth = new Auth(settings, customAuth);
         this.socket = new Socket(this);
         this.httpServer = new HTTPServer(this);

@@ -5,7 +5,7 @@ class BaseModel {
     constructor(server) {
         this.collection  = '';
         this.initialized = false;
-        this.db = new MongoDBInterface();
+        this.db = new MongoDBInterface(server.settings);
         this.dbSchema = this.db.getSchema();
     }
     
@@ -71,11 +71,10 @@ class BaseModel {
         return new Promise(function(resolve, reject) {
             self.init();
             var dbModel = new self.DBModel();
-            var response = {};
             dbModel = self.updateDBModel(dbModel, data);
             dbModel.save(function(err, data){
                 if(err) {
-                    reject({"error" : true,"message" : "Error saving data", "errorMsg:" : err});  
+                    reject({"error" : true, "message" : "Error saving data", "errorMsg" : err});  
                 } else {
                     data =  !!data ? data._doc : data;
                     resolve(Object.assign({}, data));
@@ -91,7 +90,7 @@ class BaseModel {
             self.init();
             self.DBModelDB.get().aggregate(query, function (err, data) {
                if(err) {
-                    reject({"error" : true,"message" : "Error retrieving aggregated data", "errorMsg:" : err});  
+                    reject({"error" : true,"message" : "Error retrieving aggregated data", "errorMsg" : err});  
                 } else {
                     data =  !!data ? data._doc : data;
                     resolve(Object.assign({}, data));
@@ -107,7 +106,7 @@ class BaseModel {
                 self.init(); 
                 self.DBModel.find(query,function(err, data){
                 if(err) {
-                    reject({"error" : true, "message" : "Error fetching data", "errorMsg:" : err});  
+                    reject({"error" : true, "message" : "Error fetching data", "errorMsg" : err});  
                 } else {
                     resolve(data);
                 }
@@ -122,7 +121,7 @@ class BaseModel {
         return new Promise(function(resolve, reject) { 
                 self.DBModel.findOne(query,function(err, data){
                 if(err) {
-                    reject({"error" : true,"message" : "Error fetching data", "errorMsg:" : err});  
+                    reject({"error" : true,"message" : "Error fetching data", "errorMsg" : err});  
                 } else {
                     data = !!data && !!data._doc ? data._doc : data;
                     resolve(data);
@@ -138,7 +137,7 @@ class BaseModel {
         return new Promise(function(resolve, reject) {
             self.DBModel.findById(id, function (err, data) {
                 if(err) {
-                    reject({"error" : true,"message" : "Error updating data", "errorMsg:" : err});  
+                    reject({"error" : true,"message" : "Error updating data", "errorMsg" : err});  
                 } else {
                     resolve(Object.assign({}, data));
                 }
@@ -158,7 +157,11 @@ class BaseModel {
         return new Promise(function(resolve, reject) {
             self.DBModel.updateOne(query, body, function(err, data) {
                 if(err) {
-                    reject({"error" : true, "data" : data, "type" : err.name});  
+                    if(err.name === "CastError") {
+                        reject({"error" : true, "data" : data, "type" : err.name, "path" : err.path});  
+                    } else {
+                        reject({"error" : true, "data" : data, "type" : err.name}); 
+                    }
                 } else {
                     resolve({"body" : body, "data" : data});
                 }
@@ -192,18 +195,17 @@ class BaseModel {
             self.init();
             self.DBModel.find(query,function(err, dbModel) {
                 if(err) {
-                    response = {"error" : true, "message" : "Error fetching data", "errMsg:" : err};
-                    self.closeConnection();
+                    reject({"error" : true, "message" : "Error fetching data", "errMsg" : err});
                 } else {
-                    self.DBModel.remove(query,function(err){
+                    self.DBModel.deleteMany(query, function(err, res){
                         if(err) {
-                            reject({"error" : true, "message" : "Error deleting data", "errorMsg:" : err});  
+                            reject({"error" : true, "message" : "Error deleting data", "errorMsg" : err});  
                         } else {
-                            resolve(Object.assign(query,{"error" : false, "message" : "Delete success."}));
+                            resolve(Object.assign(query,{"error" : false, "deleteCount": res.deletedCount, "message" : "Delete success."}));
                         }
-                        self.closeConnection();
                     });
                 }
+                self.closeConnection();
             });
         });
     }
