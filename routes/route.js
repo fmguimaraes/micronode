@@ -20,7 +20,7 @@ class Router extends M2Object {
       self.processRoute(routerInfo, self, 'post');
       self.processRoute(routerInfo, self, 'put');
       self.processRoute(routerInfo, self, 'delete');
-      self.processRouteUse(routerInfo, self, 'use');
+      self.processRoute(routerInfo, self, 'use');
 
       httpServer.use(self.router, routerInfo);
     });
@@ -32,18 +32,19 @@ class Router extends M2Object {
     if (!!routerInfo[method]) {
       console.log('[Router]', method, routerInfo.path);
 
-      self.router.route(routerInfo.path)[method](isTokenRequired.bind(self.auth), function (req, res, next) {
-        routerInfo[method](req, res, next);
-      });
-    }
-  }
-
-  processRouteUse(routerInfo, self, method) {
-    if (!!routerInfo[method]) {
-        console.log('[Router]', method, routerInfo.path);
+      if(method === "use") {
         self.router.use(routerInfo.path, routerInfo[method]);
-        self.router.route(routerInfo.path)[routerInfo.callBackFunctionType]( routerInfo.callBackFunction );
+        self.router.route(routerInfo.path)[routerInfo.callBackFunctionType](
+          isTokenRequired.bind(self.auth),
+          routerInfo.callBackFunction
+        );
+      } else {
+        self.router.route(routerInfo.path)[method](isTokenRequired.bind(self.auth), function (req, res, next) {
+          routerInfo[method](req, res, next);
+        });
       }
+      
+    }
   }
 
   createRouters() {

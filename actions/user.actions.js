@@ -2,7 +2,7 @@
 var UserModel = require('../models/user.model.js')
 const Action = require('./action')
 const RESPONSES = require('../consts/responses')
-var Auth = require('../auth/AuthController')
+var Auth = require('../auth/Auth')
 
 class UserActions extends Action {
     constructor(app) {
@@ -23,7 +23,11 @@ class UserActions extends Action {
         try {
             user = await this.model.readOne({ email: req.body.email })
             if (!!user) {
-                passwordIsValid = Auth.comparePasswords(req.body.password, user.password);
+                try {
+                    passwordIsValid = await Auth.comparePasswords(req.body.password, user.password);
+                } catch(err) {
+                    passwordIsValid = false;
+                }
                 if (passwordIsValid) {
                     delete user.password;
                     user = Object.assign(user, { token: Auth.create24hToken(user._id) });
@@ -151,11 +155,11 @@ class UserActions extends Action {
     }
 
     async createUser(body) {
-        body.password = Auth.encrypt(body.password);
         //body.email = Auth.encrypt(body.email);
         let reason, user;
 
         try {
+            body.password = await Auth.encryptPassword(body.password);
             user = await this.model.create(body)
         } catch (err) {
             reason = err

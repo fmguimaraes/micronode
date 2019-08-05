@@ -10,14 +10,17 @@ const Errors = require('./constants/errors');
 const Docker = require('dockerode');
 
 class Server {
-    constructor(settings, customAuth) {
+    constructor(settings, permissions) {
         if (!settings) {
             throw Errors.INVALID_SETTINGS;
+        }
+        if (!permissions) {
+            throw Errors.INVALID_PERMISSIONS;
         }
 
         this.settings = settings;
         this.docker = new Docker({ socketPath: this.settings.Servers.docker});
-        this.auth = new Auth(settings, customAuth);
+        this.auth = new Auth(settings, permissions);
         this.socket = new Socket(this);
         this.httpServer = new HTTPServer(this);
         this.log = new Log(this);

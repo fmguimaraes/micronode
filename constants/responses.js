@@ -8,11 +8,12 @@ const responses = {
     UNKNOW_USER: { message: "unknow user" },
     USER_ALREADY_EXISTS: { message: "user already registered" },
     UNABLE_TO_CREATE_USER: { message: "unable to create user" },
-    INVALID_PASSWORD: { error: { code:401, message: "invalid username or password"} },
+    INVALID_CREDENTIAL: { message: "invalid username or password" },
 
     HTTP_STATUS : {
         OK : 200,
         BAD_REQUEST : 400,
+        UNAUTHORIZED : 401,
         NOT_FOUND : 404,
         CONFLICT : 409,
         INTERNAL_SERVER_ERROR : 500,
