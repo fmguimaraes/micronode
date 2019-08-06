@@ -14,6 +14,14 @@ class Action extends M2Object {
     prepareBodyToUpdate(body) {
         return { ...body}
     }
+
+    cleanResult(result) {
+        return result;
+    }
+
+    deleteAllOccurencies(query) {
+        
+    }
     
     async read(req, res) {
         let idRequested = Object.keys(req.params).length != 0 ? req.params.id : req.query.id;
@@ -25,6 +33,7 @@ class Action extends M2Object {
 
         try {
             result = await this.model.readOne(query);
+            result = this.cleanResult(result);
         } catch (err) {
             errorCaught = true;
             errorName = err.errorMsg.name;
@@ -63,6 +72,7 @@ class Action extends M2Object {
         if (!!update_result.data && update_result.data.nModified > 0) {
             try {
                 result = await this.model.readOne(readOneQuery);
+                result = this.cleanResult(result);
                 code = RESPONSES.HTTP_STATUS.OK;
             } catch (err) {
                 code = RESPONSES.HTTP_STATUS.INTERNAL_SERVER_ERROR;
@@ -96,6 +106,7 @@ class Action extends M2Object {
 
         try {
             result = await this.model.delete(query);
+            this.deleteAllOccurencies(query);
         } catch (err) {
             errorCaught = true;
             error = err.errMsg;

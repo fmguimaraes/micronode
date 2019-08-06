@@ -103,12 +103,27 @@ class BaseModel {
     async read(query) {
         var self = this;
         return new Promise(function(resolve, reject) {
-                self.init(); 
-                self.DBModel.find(query,function(err, data){
+            self.init(); 
+            self.DBModel.find(query,function(err, data) {
                 if(err) {
                     reject({"error" : true, "message" : "Error fetching data", "errorMsg" : err});  
                 } else {
                     resolve(data);
+                }
+                self.closeConnection();
+            });
+        });
+    }
+
+    async count(query) {
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            self.init(); 
+            self.DBModel.countDocuments(query, function(err, c){
+                if(err) {
+                    reject({"error" : true, "message" : "Error fetching data", "errorMsg" : err});  
+                } else {
+                    resolve(c);
                 }
                 self.closeConnection();
             });
