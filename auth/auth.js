@@ -3,13 +3,13 @@
 var jwt = require('jsonwebtoken');
 const argon2 = require('argon2');
 const fs = require('fs');
-const RESPONSES = require('../constants/responses')
+const RESPONSES = require('../constants/responses');
 
 class Auth {
     constructor(settings, permissions) {
         this.permissions = permissions;
         this.seed = settings.Authentication.seed;
-        this.headerTokenName = setting.Authentication.headerTokenName;
+        this.headerTokenName = settings.Authentication.headerTokenName;
 
         this.privateKey = fs.readFileSync(settings.Authentication.privateKey);
         this.publicKey = fs.readFileSync(settings.Authentication.publicKey);
