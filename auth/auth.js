@@ -9,14 +9,14 @@ class Auth {
     constructor(settings, permissions) {
         this.permissions = permissions;
         this.seed = settings.Authentication.seed;
-        this.headerTokenName = settings.Authentication.headerTokenName;
+        this.headerTokenName = settings.Authentication.headerTokenName.toLowerCase();
 
         this.privateKey = fs.readFileSync(settings.Authentication.privateKey);
         this.publicKey = fs.readFileSync(settings.Authentication.publicKey);
     }
 
     hasToken(req) {
-        return !!req.headers[this.headerTokenName.toLowerCase()];
+        return !!req.headers[this.headerTokenName];
     };
 
     async encryptPassword(password) {
@@ -106,7 +106,7 @@ class Auth {
             token = null;
         
         if (this.hasToken(req)) {
-            token = req.headers[this.headerTokenName.toLowerCase()];
+            token = req.headers[this.headerTokenName];
             isValid = await this.verifyToken(token, path, method);
         }
 
