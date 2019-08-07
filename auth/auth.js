@@ -7,7 +7,7 @@ const RESPONSES = require('../constants/responses');
 
 class Auth {
     constructor(settings, permissions) {
-        this.permissions = permissions;
+        this.permissions = permissions.permissions;
         this.seed = settings.Authentication.seed;
         this.headerTokenName = settings.Authentication.headerTokenName.toLowerCase();
 
