@@ -16,11 +16,11 @@ class Auth {
     }
 
     hasToken(req) {
-        return !!req.headers[this.headerTokenName];
+        return !!req.headers[this.headerTokenName.toLowerCase()];
     };
 
     async encryptPassword(password) {
-        const hashedPassword = "";
+        let hashedPassword = "";
         
         try {
             hashedPassword = await argon2.hash(password);
@@ -31,9 +31,9 @@ class Auth {
         return hashedPassword;
     };
 
-    async comparePasswords(password, dbPassword) {
+    async comparePasswords(password, stockedPassword) {
         try {
-            if (await argon2.verify(password, dbPassword)) {
+            if (await argon2.verify(stockedPassword, password)) {
                 return true;
             } else {
                 return false;
@@ -59,55 +59,55 @@ class Auth {
             throw err;
         }
 
-        console.log(returnValue);
         return returnValue;
     };
 
-    getRolesFromPath(path, method) {
-        let Roles = [];
-
-        for(a_path in this.permissions) {
-            for(a_method in a_path) {
-                Roles.push(this.permissions[a_path][a_method]); 
+    async checkIfTokenHasRole(hasAccess, pathRoles, tokenRoles) {
+        for(let role in pathRoles) {
+            for(let tokenRole in tokenRoles) {
+                if(pathRoles[role] === tokenRoles[tokenRole]) {
+                    hasAccess = true;
+                }
             }
         }
-        return Roles;
+
+        return hasAccess;
     }
 
-    verifyToken(token, path, method) {
-        let pathRoles = this.getRolesFromPath(path, method),
+    async verifyToken(token, path, method) {
+        let pathRoles = null,
             hasAccess = false;
 
+        if(!!this.permissions[path] && !!this.permissions[path][method]) {
+            pathRoles = this.permissions[path][method];
+        } else {
+            return hasAccess;
+        }
+        
         try {
-            let token = jwt.verify(token, this.privateKey, { 
-                algorithms: ['RS256']
+            token = await jwt.verify(token, this.privateKey, { 
+                algorithms: ['ES256']
             });
         } catch(err) {
             return hasAccess;
         }
         
-        console.log(token);
-        //vérifier l'utilisateur ici
-
-        for(role in pathRoles) {
-            for(tokenRole in token.roles) {
-                console.log(role, " / ", tokenRole);
-                if(role === tokenRole) {
-                    hasAccess = true;
-                }
-            }
+        if(pathRoles && token.roles) {
+            hasAccess = this.checkIfTokenHasRole(hasAccess, pathRoles, token.roles);
         }
         
         return hasAccess;
     }
 
     async tokenRequired(req, res, next) {
-        let isValid = false;
-        let path = req.route.path;
-        let method = req.method;
+        let isValid = false,
+            path = req.route.path,
+            method = req.method,
+            token = null;
         
         if (this.hasToken(req)) {
-            isValid = await this.verifyToken(req.headers[this.headerTokenName], path, method);
+            token = req.headers[this.headerTokenName.toLowerCase()];
+            isValid = await this.verifyToken(token, path, method);
         }
 
         if (!this.hasToken(req)) {

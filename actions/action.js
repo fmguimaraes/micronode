@@ -22,6 +22,16 @@ class Action extends M2Object {
     deleteAllOccurencies(query) {
         
     }
+
+    getMissingFieldName(error) {
+        let pathName = "";
+
+        for(let key in error) {
+            pathName = error[key].properties.path;
+        }
+
+        return pathName;
+    }
     
     async read(req, res) {
         let idRequested = Object.keys(req.params).length != 0 ? req.params.id : req.query.id;
