@@ -6,8 +6,7 @@ const responses = {
     UNKNOW_ERROR: { message : "unknow error"},
 
     UNKNOW_USER: { message: "unknow user" },
-    USER_ALREADY_EXISTS: { message: "user already registered" },
-    UNABLE_TO_CREATE_USER: { message: "unable to create user" },
+    VALIDATION_PROBLEM_USER : { message: "validation error during user creation"},
     INVALID_CREDENTIAL: { message: "invalid username or password" },
 
     HTTP_STATUS : {

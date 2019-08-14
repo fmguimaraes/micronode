@@ -43,7 +43,6 @@ class Action extends M2Object {
 
         try {
             result = await this.model.readOne(query);
-            result = this.cleanResult(result);
         } catch (err) {
             errorCaught = true;
             errorName = err.errorMsg.name;
@@ -53,6 +52,8 @@ class Action extends M2Object {
             if (!result) {
                 code = RESPONSES.HTTP_STATUS.NOT_FOUND;
                 result = this.unknowObjectError;
+            } else {
+                result = this.cleanResult(result);
             }
         } else if(errorName === ERROR.MONGO.CAST) {
             code = RESPONSES.HTTP_STATUS.NOT_FOUND;
