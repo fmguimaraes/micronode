@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "jsonwebtoken": "^8.3.0",
-    "@fmguimaraes/micronode": "file:///home/felipe/dev/mach-two/micronode"
+    "@fmguimaraes/micronode": "/home/airbook/Documents/micronode"
   },
   "devDependencies": {
     "jsonwebtoken": "^8.3.0",

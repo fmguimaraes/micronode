@@ -1,11 +1,10 @@
 "use strict"
 
-let Express = require('express');
-let bodyParser = require('body-parser');
-let http = require('http');
-let serveIndex = require('serve-index')
-let UploadServer = require('./uploadServer');
-
+const Express = require('express');
+const bodyParser = require('body-parser');
+const http = require('http');
+const serveIndex = require('serve-index')
+const UploadServer = require('./uploadServer');
 
 class HTTPServer {
 	constructor(node) {
@@ -15,12 +14,12 @@ class HTTPServer {
 		this.bodyParser = bodyParser;
 		this.http = http;
 
-
 		this.configureHeaderAccess(this.app);
 		this.createHealthCheck(this.app);
 		this.configureUploadServer(this.app);
 		this.configureStaticServer(this.app);
 	}
+
 	configureStaticServer(app) {
 		if (!!this.settings.Folders && !!this.settings.Folders.static) {
 			this.settings.Folders.static.forEach((staticFolder) => {
@@ -46,15 +45,17 @@ class HTTPServer {
 	}
 
 	configureHeaderAccess(expressApp) {
-		expressApp.use(bodyParser.urlencoded({ extended: false }))
-		expressApp.use(bodyParser.json())
+		let AllowedHeaders = this.settings.Authentication.headerTokenName + ", Location, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, tus-resumable, upload-length, upload-metadata";
+		
+		expressApp.use(bodyParser.urlencoded({ extended: false }));
+		expressApp.use(bodyParser.json());
 
 		expressApp.use(function (req, response, next) {
 			response.setHeader("Access-Control-Allow-Credentials", "true");
 			response.setHeader('Access-Control-Allow-Origin', '*');
-			response.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE,PATCH");
+			response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, POST, PUT, DELETE, PATCH");
 			response.setHeader("Access-Control-Expose-Headers", "Location, Upload-Offset, Upload-Checksum");
-			response.setHeader("Access-Control-Allow-Headers", "Authorization, Location, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, tus-resumable, upload-length, upload-metadata");
+			response.setHeader("Access-Control-Allow-Headers", AllowedHeaders);
 			next();
 		});
 	}

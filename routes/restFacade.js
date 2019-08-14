@@ -1,4 +1,5 @@
 "use strict"
+
 class RestFacade {
   constructor(node) {
     this.node = node;
@@ -11,6 +12,5 @@ class RestFacade {
     });
   }
 }
-
 
 module.exports = RestFacade;

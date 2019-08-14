@@ -7,6 +7,12 @@ Micronode is a set of tools to easily bootstrap a (micro)service architecture. I
 ## Database Access
 ## Auth System
 
+To create private and public key for JWT system : 
+```
+openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem
+openssl ec -in ec_private.pem -pubout -out ec_public.pem
+``` 
+
 # Environment
 ```bash
 sudo apt-get install nodejs npm mongodb -y

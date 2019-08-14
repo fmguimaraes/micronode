@@ -1,42 +1,58 @@
 "use strict"
 
 var jwt = require('jsonwebtoken');
-var bcrypt = require('bcryptjs');
-const RESPONSES = require('../constants/responses')
-
+const argon2 = require('argon2');
+const fs = require('fs');
+const RESPONSES = require('../constants/responses');
 
 class Auth {
-    constructor(settings, customAuthentication) {
-        this.customAuthentication = customAuthentication;
-        this.secret = settings.Authentication.secret;
+    constructor(settings, permissions) {
+        this.permissions = permissions.permissions;
+        this.seed = settings.Authentication.seed;
+        this.headerTokenName = settings.Authentication.headerTokenName.toLowerCase();
+
+        this.privateKey = fs.readFileSync(settings.Authentication.privateKey);
+        this.publicKey = fs.readFileSync(settings.Authentication.publicKey);
     }
 
     hasToken(req) {
-        return !!req.headers['authorization'];;
+        return !!req.headers[this.headerTokenName];
     };
 
-    encrypt(text) {
-        const hashPassword = bcrypt.hashSync(text);
-
-        return hashPassword
+    async encryptPassword(password) {
+        let hashedPassword = "";
+        
+        try {
+            hashedPassword = await argon2.hash(password);
+        } catch (err) {
+            throw err;
+        }
+        
+        return hashedPassword;
     };
 
-
-    comparePasswords(password, dbPassword) {
-        return (!!password && !!dbPassword) ? bcrypt.compareSync(password, dbPassword) : false;
+    async comparePasswords(password, stockedPassword) {
+        try {
+            if (await argon2.verify(stockedPassword, password)) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            throw err;
+        }
     }
 
-    decrypt(token) {
-        var base64Url = token.split('.')[1];
-        var base64 = base64Url.replace('-', '+').replace('_', '/');
-        return JSON.parse(window.atob(base64));
-    };
-
-    create24hToken(id) {
+    create24hToken(id, roleArray) {
         var returnValue = null;
+        var content = {
+            _id: id,
+            roles: roleArray
+        };
 
         try {
-            returnValue = jwt.sign({ _id: id }, this.secret, {
+            returnValue = jwt.sign(content, this.publicKey, {
+                algorithm: 'ES256',
                 expiresIn: 86400
             });
         } catch (err) {
@@ -46,54 +62,58 @@ class Auth {
         return returnValue;
     };
 
-    async  verifyToken(token) {
-        return new Promise((resolve, reject) => {
-            jwt.verify(token, this.secret, function (err, decoded) {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve(decoded)
+    async checkIfTokenHasRole(hasAccess, pathRoles, tokenRoles) {
+        for(let role in pathRoles) {
+            for(let tokenRole in tokenRoles) {
+                if(pathRoles[role] === tokenRoles[tokenRole]) {
+                    hasAccess = true;
                 }
-            });
+            }
+        }
 
-        });
+        return hasAccess;
     }
 
-    async  decryptToken(token) {
-        var tokenData = null;
+    async verifyToken(token, path, method) {
+        let pathRoles = null,
+            hasAccess = false;
 
+        if(!!this.permissions[path] && !!this.permissions[path][method]) {
+            pathRoles = this.permissions[path][method];
+        } else {
+            return hasAccess;
+        }
+        
         try {
-            tokenData = await this.verifyToken(token)
+            token = await jwt.verify(token, this.privateKey, { 
+                algorithms: ['ES256']
+            });
+        } catch(err) {
+            return hasAccess;
         }
-        catch (err) {
-            //  console.log(err);
+        
+        if(pathRoles && token.roles) {
+            hasAccess = this.checkIfTokenHasRole(hasAccess, pathRoles, token.roles);
         }
-
-        return tokenData;
-    }
-
-
-    async  validateToken(token) {
-        let tokenData = await this.decryptToken(token);
-
-        if (tokenData && this.customAuthentication) {
-            tokenData = await this.customAuthentication(tokenData);
-        }
-
-        return tokenData;
+        
+        return hasAccess;
     }
 
     async tokenRequired(req, res, next) {
-        let isValid = false;
-
+        let isValid = false,
+            path = req.route.path,
+            method = req.method,
+            token = null;
+        
         if (this.hasToken(req)) {
-            isValid = await this.validateToken(req.headers['authorization']);
+            token = req.headers[this.headerTokenName];
+            isValid = await this.verifyToken(token, path, method);
         }
 
         if (!this.hasToken(req)) {
-            res.status(401).send(RESPONSES.TOKEN_NOT_PROVIDED)
+            res.status(RESPONSES.HTTP_STATUS.UNAUTHORIZED).send(RESPONSES.TOKEN_NOT_PROVIDED)
         } else if (!isValid) {
-            res.status(401).send(RESPONSES.INVALID_TOKEN)
+            res.status(RESPONSES.HTTP_STATUS.UNAUTHORIZED).send(RESPONSES.INVALID_TOKEN)
         } else {
             next()
         }
