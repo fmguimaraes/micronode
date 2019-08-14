@@ -7,7 +7,7 @@ const responses = {
 
     UNKNOW_USER: { message: "unknow user" },
     VALIDATION_PROBLEM_USER : { message: "validation error during user creation"},
-    INVALID_CREDENTIAL: { message: "invalid username or password" },
+    INVALID_CREDENTIAL: { message: "invalid email or password" },
 
     HTTP_STATUS : {
         OK : 200,
