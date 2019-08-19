@@ -34,15 +34,16 @@ class Action extends M2Object {
     }
     
     async read(req, res) {
-        let idRequested = Object.keys(req.params).length != 0 ? req.params.id : req.query.id;
-        let query = { _id: idRequested };
+        let query = Object.keys(req.params).length != 0 ? req.params : req.query;
         let result = null,
             errorCaught = false,
             errorName = null,
             code = RESPONSES.HTTP_STATUS.OK;
 
+        query = this.model.createQuery(query);
+
         try {
-            result = await this.model.readOne(query);
+            result = await this.model.read(query);
         } catch (err) {
             errorCaught = true;
             errorName = err.errorMsg.name;
