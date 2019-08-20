@@ -53,7 +53,7 @@ class Action extends M2Object {
             if (!result || result.length < 1) {
                 code = RESPONSES.HTTP_STATUS.NOT_FOUND;
                 result = this.unknowObjectError;
-            } else if(result.length = 1) {
+            } else if(result.length == 1) {
                 result = this.cleanResult(result[0]);
             } else {
                 result = this.cleanResult(result);
