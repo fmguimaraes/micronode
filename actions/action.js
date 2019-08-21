@@ -27,7 +27,7 @@ class Action extends M2Object {
         let pathName = "";
 
         for(let key in error) {
-            pathName = error[key].properties.path;
+            pathName = error[key].path;
         }
 
         return pathName;
