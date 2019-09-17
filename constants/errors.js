@@ -8,6 +8,8 @@ const errors = {
         CAST : "CastError",
         VALIDATION : "ValidationError"
     },
+
+    MISSING_PASSWORD : "MissingPassword",
 };
 
 module.exports = errors;

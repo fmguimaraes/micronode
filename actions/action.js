@@ -27,32 +27,36 @@ class Action extends M2Object {
         let pathName = "";
 
         for(let key in error) {
-            pathName = error[key].properties.path;
+            pathName = error[key].path;
         }
 
         return pathName;
     }
     
     async read(req, res) {
-        let idRequested = Object.keys(req.params).length != 0 ? req.params.id : req.query.id;
-        let query = { _id: idRequested };
+        let query = Object.keys(req.params).length != 0 ? req.params : req.query;
         let result = null,
             errorCaught = false,
             errorName = null,
             code = RESPONSES.HTTP_STATUS.OK;
 
+        query = this.model.createQuery(query);
+
         try {
-            result = await this.model.readOne(query);
-            result = this.cleanResult(result);
+            result = await this.model.read(query);
         } catch (err) {
             errorCaught = true;
             errorName = err.errorMsg.name;
         }
 
         if(!errorCaught) {
-            if (!result) {
+            if (!result || result.length < 1) {
                 code = RESPONSES.HTTP_STATUS.NOT_FOUND;
                 result = this.unknowObjectError;
+            } else if(result.length == 1) {
+                result = this.cleanResult(result[0]);
+            } else {
+                result = this.cleanResult(result);
             }
         } else if(errorName === ERROR.MONGO.CAST) {
             code = RESPONSES.HTTP_STATUS.NOT_FOUND;

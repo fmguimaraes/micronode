@@ -43,6 +43,20 @@ class Auth {
         }
     }
 
+    async decryptToken(token) {
+        let decryptedToken = {};
+
+        try {
+            decryptedToken = await jwt.verify(token, this.privateKey, {
+                algorithms: ['ES256']
+            });
+        } catch (err) {
+            throw err;
+        }
+        
+        return decryptedToken;
+    }
+
     create24hToken(id, roleArray) {
         var returnValue = null;
         var content = {
