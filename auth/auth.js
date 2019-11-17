@@ -91,7 +91,6 @@ class Auth {
     async verifyToken(token, path, method) {
         let pathRoles = null,
             hasAccess = false;
-
         if(!!this.permissions[path] && !!this.permissions[path][method]) {
             pathRoles = this.permissions[path][method];
         } else {

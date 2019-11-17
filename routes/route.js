@@ -78,7 +78,7 @@ class Router extends M2Object {
 
   update(req, res) {
     var query = this.model.createQuery(req.params);
-    console.log(query);
+
     this.model.update(query, req.body)
       .then(result => {
         console.log("Router Update Success", result);
