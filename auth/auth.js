@@ -3,12 +3,17 @@
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 const RESPONSES = require('../constants/responses')
-
+const {
+    AUTH_TOKEN_NAME,
+    AUTH_SECRET,
+    AUTH_SEED,
+    AUTH_PUB_KEY,
+    AUTH_PRIVATE_KEY,
+  } = process.env;
 
 class Auth {
     constructor(settings, customAuthentication) {
         this.customAuthentication = customAuthentication;
-        this.secret = settings.Authentication.secret;
     }
 
     hasToken(req) {
@@ -36,7 +41,7 @@ class Auth {
         var returnValue = null;
 
         try {
-            returnValue = jwt.sign({ _id: id }, this.secret, {
+            returnValue = jwt.sign({ _id: id }, AUTH_SECRET, {
                 expiresIn: 86400
             });
         } catch (err) {
@@ -48,7 +53,7 @@ class Auth {
 
     async  verifyToken(token) {
         return new Promise((resolve, reject) => {
-            jwt.verify(token, this.secret, function (err, decoded) {
+            jwt.verify(token, AUTH_SECRET, function (err, decoded) {
                 if (err) {
                     reject(err)
                 } else {

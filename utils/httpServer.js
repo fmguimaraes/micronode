@@ -20,11 +20,11 @@ class HTTPServer {
 		this.bodyParser = bodyParser;
 		this.http = http;
 
-
 		this.configureHeaderAccess(this.app);
 		this.createHealthCheck(this.app);
 		this.configureUploadServer(this.app);
 		this.configureStaticServer(this.app);
+		console.log("done");
 	}
 	configureStaticServer(app) {
 		if (!!this.settings.Folders && !!this.settings.Folders.static) {
@@ -66,9 +66,8 @@ class HTTPServer {
 
 	start() {
 		this.server = http.createServer(this.app).listen(SERVER_PORT, SERVER_HOST , function () {
-			console.log(SERVER_NAME + ' service running with Express server listening on:' + SERVER_HOST + ':' + SERVER_PORT);
+			console.log(SERVER_NAME + ' service running with Express server listening on: ' + SERVER_HOST + ':' + SERVER_PORT);
 		});
-		
 		this.node.socket.init();
 	}
 
