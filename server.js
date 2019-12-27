@@ -40,7 +40,6 @@ class Server {
             this.actions = actions;
 
             this.rest = new RESTFacade(this);
-
             this.httpServer.start();
         }
     }

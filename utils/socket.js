@@ -2,6 +2,12 @@ var ioserver = require('socket.io');
 var middleware = require('socketio-wildcard')();
 var M2Object = require('../M2Object.js');
 var io = require('socket.io-client');
+const {
+	SERVER_NAME,
+	SERVER_HOST,
+	SERVER_PORT,
+  } = process.env;
+
 class Socket extends M2Object {
     constructor(app) {
         super(app)
@@ -35,7 +41,7 @@ class Socket extends M2Object {
 
     startClient() {
         if (!!this.settings.Servers && !!this.settings.Servers.messageBroker) {
-            console.log(this.settings.Server.name, 'start client');
+            console.log(`Start ${SERVER_NAME} service socket client`);
             this.socketClient = io(this.settings.Servers.messageBroker);
             this.socketClient.on('connect', this.onSocketConnected.bind(this));
 
@@ -53,7 +59,7 @@ class Socket extends M2Object {
 
 
     onConnected(socket) {
-        console.log(socket.id, 'connected');
+        console.log(socket.id, ' connected');
         this.socketMap[socket.id] = socket;
         let self = this;
 
