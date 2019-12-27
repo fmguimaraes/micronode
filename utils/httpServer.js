@@ -6,6 +6,11 @@ let http = require('http');
 let serveIndex = require('serve-index')
 let UploadServer = require('./uploadServer');
 
+const {
+	SERVER_NAME,
+	SERVER_HOST,
+	SERVER_PORT,
+  } = process.env;
 
 class HTTPServer {
 	constructor(node) {
@@ -15,11 +20,11 @@ class HTTPServer {
 		this.bodyParser = bodyParser;
 		this.http = http;
 
-
 		this.configureHeaderAccess(this.app);
 		this.createHealthCheck(this.app);
 		this.configureUploadServer(this.app);
 		this.configureStaticServer(this.app);
+		console.log("done");
 	}
 	configureStaticServer(app) {
 		if (!!this.settings.Folders && !!this.settings.Folders.static) {
@@ -60,11 +65,9 @@ class HTTPServer {
 	}
 
 	start() {
-		var self = this;
-		this.server = http.createServer(this.app).listen(this.settings.Server.port, this.settings.Server.host , function () {
-			console.log(self.settings.Server.name  + ' service running with Express server listening on:' + self.settings.Server.host + ':' + self.settings.Server.port);
+		this.server = http.createServer(this.app).listen(SERVER_PORT, SERVER_HOST , function () {
+			console.log(SERVER_NAME + ' service running with Express server listening on: ' + SERVER_HOST + ':' + SERVER_PORT);
 		});
-
 		this.node.socket.init();
 	}
 

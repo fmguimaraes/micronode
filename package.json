@@ -1,36 +1,41 @@
 {
-  "name": "@fmguimaraes/micronode",
-  "version": "0.0.1",
-  "description": "Micro Service Framework",
-  "keywords": [
-    "microservices",
-    "npm",
-    "server",
-    "example",
-    "fmguimaraes"
+  "_args": [
+    [
+      "@fmguimaraes/micronode@file:///home/felipe/dev/mach-two/micronode",
+      "/home/felipe/dev/mach-two/core"
+    ]
   ],
+  "_from": "../micronode",
+  "_id": "@fmguimaraes/micronode@0.0.1",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/@fmguimaraes/micronode",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "@fmguimaraes/micronode",
+    "raw": "@fmguimaraes/micronode@file:///home/felipe/dev/mach-two/micronode",
+    "rawSpec": "file:///home/felipe/dev/mach-two/micronode",
+    "scope": "@fmguimaraes",
+    "spec": "/home/felipe/dev/mach-two/micronode",
+    "type": "directory"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "file:../micronode",
+  "_shasum": "17eebf4673d48517aa803b9148c617ea1f3eddde",
+  "_shrinkwrap": null,
+  "_spec": "@fmguimaraes/micronode@file:///home/felipe/dev/mach-two/micronode",
+  "_where": "/home/felipe/dev/mach-two/core",
   "author": {
-    "name": "Felipe Machado Guimarães",
     "email": "machado.guimaraes@gmail.com",
+    "name": "Felipe Machado Guimarães",
     "url": "http://www.felipeguimaraes.io/"
   },
-  "homepage": "http://www.felipeguimaraes.io/",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:fmguimaraes/micronode.git"
+  "bugs": {
+    "url": "https://github.com/fmguimaraes/micronode/issues"
   },
-  "engines": {
-    "node": ">= 6.0.0",
-    "npm": ">= 1.0.0"
-  },
-  "license": "MIT",
-  "scripts": {
-    "start": "export NODE_ENV=dev && node server.js",
-    "test-postman": "export NODE_ENV=test && nodemon server.js",
-    "test": "mocha --exit",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
-  },
+  "bundleDependencies": [],
   "dependencies": {
     "atob": "^2.1.2",
     "axios": "^0.19.0",
@@ -44,19 +49,49 @@
     "request": "2.88.0",
     "rimraf": "^2.6.3",
     "serve-index": "^1.9.1",
+    "snyk": "^1.189.0",
     "socket.io": "^2.2.0",
     "socketio-wildcard": "^2.0.0",
-    "tus-node-server": "^0.3.2",
-    "snyk": "^1.189.0"
+    "tus-node-server": "^0.3.2"
   },
+  "description": "Micro Service Framework",
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-html": "^1.2.3",
     "chai-http": "^4.3.0",
     "mocha": "^6.2.0"
   },
-  "bundleDependencies": [],
-  "private": true,
+  "engines": {
+    "node": ">= 6.0.0",
+    "npm": ">= 1.0.0"
+  },
+  "gitHead": "8560d913c5cdd340b201f7f095745f0d08ea3e41",
+  "homepage": "http://www.felipeguimaraes.io/",
+  "keywords": [
+    "example",
+    "fmguimaraes",
+    "microservices",
+    "npm",
+    "server"
+  ],
+  "license": "MIT",
   "main": "index.js",
-  "snyk": true
+  "name": "@fmguimaraes/micronode",
+  "optionalDependencies": {},
+  "private": true,
+  "readme": "Micronode is a set of tools to easily bootstrap a (micro)service architecture. It is made with NodeJS, Express, MongoDB, SocketIO, TusIO and is intended to be used inside a folder that respects an specific organization (described in /scaffod folder). This project is not finished; proper documentation and example are needed. \n\n## Actions\n## Routes\n## Models\n## Upload\n## Database Access\n## Auth System\n\n# Environment\n```bash\nsudo apt-get install nodejs npm mongodb -y\n\n```\n```bash\nsource ~/.bashrc\nln -s /usr/bin/nodejs /usr/bin/node \nnpm install nodemon --global\n``` \n\n\n## database\nLocal database configuration\n```bash\nmkdir data\nmkdir data/db\nmongo\n\nuse yourDatabase\ndb.createUser( { user: \"your-username\",\n                 pwd: \"your-password\",\n                 roles: [ { role: \"clusterAdmin\", db: \"admin\" },\n                          { role: \"readAnyDatabase\", db: \"admin\" },\n                          \"readWrite\"] },\n               { w: \"majority\" , wtimeout: 5000 } )\n```\n\n## Configuring your project to use micronode\n\n```bash\ngit clone YOUR-PROJECT\ncd YOUR-PROJECT\ngit submodule add https://github.com/fmguimaraes/micronode\n```\n## Pre-flight\n```bash\ncd /path/to/your-application\ngit submodule update --init --recursive \ncd micronode\nnpm install\ncd tus-node-server\nnpm install\n```\n\nconfigure settings.js to specify correct database address, user and password.\n",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/fmguimaraes/micronode.git"
+  },
+  "scripts": {
+    "prepare": "npm run snyk-protect",
+    "snyk-protect": "snyk protect",
+    "start": "export NODE_ENV=dev && node server.js",
+    "test": "mocha --exit",
+    "test-postman": "export NODE_ENV=test && nodemon server.js"
+  },
+  "snyk": true,
+  "version": "0.0.1"
 }

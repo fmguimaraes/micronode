@@ -43,6 +43,11 @@ cd YOUR-PROJECT
 git submodule add https://github.com/fmguimaraes/micronode
 ```
 ## Pre-flight
+Generate JWT tokens:
+```bash
+openssl genrsa -aes256 -out private_key.pem 2048
+openssl rsa -pubout -in private_key.pem -out public_key.pem
+```
 ```bash
 cd /path/to/your-application
 git submodule update --init --recursive 

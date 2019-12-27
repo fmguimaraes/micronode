@@ -16,7 +16,7 @@ class Server {
         }
 
         this.settings = settings;
-        this.docker = new Docker({ socketPath: this.settings.Servers.docker});
+        this.docker = new Docker({ socketPath: '/var/run/docker.sock'});
         this.auth = new Auth(settings, customAuth);
         this.socket = new Socket(this);
         this.httpServer = new HTTPServer(this);
@@ -40,7 +40,6 @@ class Server {
             this.actions = actions;
 
             this.rest = new RESTFacade(this);
-
             this.httpServer.start();
         }
     }
