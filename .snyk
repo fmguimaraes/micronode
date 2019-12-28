@@ -1,8 +1,20 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.5
+version: v1.14.0
 ignore: {}
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   SNYK-JS-LODASH-450202:
     - mongoose > async > lodash:
         patched: '2019-07-04T04:52:15.130Z'
+  SNYK-JS-HTTPSPROXYAGENT-469131:
+    - snyk > proxy-agent > https-proxy-agent:
+        patched: '2019-12-28T05:12:16.440Z'
+    - snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-12-28T05:12:16.440Z'
+    - tus-node-server > @google-cloud/storage > @google-cloud/common > google-auto-auth > google-auth-library > gtoken > gaxios > https-proxy-agent:
+        patched: '2019-12-28T05:12:16.440Z'
+    - tus-node-server > @google-cloud/storage > gcs-resumable-upload > google-auto-auth > google-auth-library > gtoken > gaxios > https-proxy-agent:
+        patched: '2019-12-28T05:12:16.440Z'
+  SNYK-JS-TREEKILL-536781:
+    - snyk > snyk-sbt-plugin > tree-kill:
+        patched: '2019-12-28T05:12:16.440Z'
