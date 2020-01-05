@@ -1,32 +1,4 @@
 {
-  "_args": [
-    [
-      "@fmguimaraes/micronode@file:///home/felipe/dev/mach-two/micronode",
-      "/home/felipe/dev/mach-two/core"
-    ]
-  ],
-  "_from": "../micronode",
-  "_id": "@fmguimaraes/micronode@0.0.1",
-  "_inCache": true,
-  "_installable": true,
-  "_location": "/@fmguimaraes/micronode",
-  "_phantomChildren": {},
-  "_requested": {
-    "name": "@fmguimaraes/micronode",
-    "raw": "@fmguimaraes/micronode@file:///home/felipe/dev/mach-two/micronode",
-    "rawSpec": "file:///home/felipe/dev/mach-two/micronode",
-    "scope": "@fmguimaraes",
-    "spec": "/home/felipe/dev/mach-two/micronode",
-    "type": "directory"
-  },
-  "_requiredBy": [
-    "/"
-  ],
-  "_resolved": "file:../micronode",
-  "_shasum": "17eebf4673d48517aa803b9148c617ea1f3eddde",
-  "_shrinkwrap": null,
-  "_spec": "@fmguimaraes/micronode@file:///home/felipe/dev/mach-two/micronode",
-  "_where": "/home/felipe/dev/mach-two/core",
   "author": {
     "email": "machado.guimaraes@gmail.com",
     "name": "Felipe Machado Guimarães",
@@ -65,7 +37,6 @@
     "node": ">= 6.0.0",
     "npm": ">= 1.0.0"
   },
-  "gitHead": "8560d913c5cdd340b201f7f095745f0d08ea3e41",
   "homepage": "http://www.felipeguimaraes.io/",
   "keywords": [
     "example",
@@ -87,11 +58,9 @@
   },
   "scripts": {
     "prepare": "npm run snyk-protect",
-    "snyk-protect": "snyk protect",
     "start": "export NODE_ENV=dev && node server.js",
     "test": "mocha --exit",
     "test-postman": "export NODE_ENV=test && nodemon server.js"
   },
-  "snyk": true,
   "version": "0.0.1"
 }
